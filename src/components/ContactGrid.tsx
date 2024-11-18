@@ -4,7 +4,7 @@ import React from "react";
 
 export default function ContactGrid() {
     return (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 pr-6">
             <div className="flex flex-col gap-3">
                 <QuickAccess image_src="/assets/microphone.svg" alt_text="Leave a note"
                              link="/voicenote"/>
