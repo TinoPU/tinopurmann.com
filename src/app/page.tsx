@@ -2,6 +2,7 @@
 import React from 'react';
 import ContactGrid from "@/components/ContactGrid";
 import ProjectsGallery from "@/components/ProjectsGallery";
+import ResourcesGallery from "@/components/ResourcesGallery";
 
 
 
@@ -10,6 +11,7 @@ export default function Home() {
     <div className="overflow-hidden bg-black justify-start flex flex-col pl-6 pt-6 gap-6">
         <ContactGrid />
         <ProjectsGallery />
-        </div>
+        <ResourcesGallery />
+      </div>
         );
         }
