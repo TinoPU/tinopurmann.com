@@ -9,7 +9,7 @@ interface QuickAccessProps {
 export default function QuickAccess({image_src, alt_text, link}: QuickAccessProps) {
     return (
         <a href={link}>
-            <div className="flex flex-row bg-[#303336] rounded-sm">
+            <div className="flex flex-row bg-onyx rounded-sm">
                 <div className="w-1/3">
                     <Image className="h-full w-full rounded-sm" src={image_src} alt={alt_text} width={60} height={60}/>
                 </div>

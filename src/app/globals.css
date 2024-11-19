@@ -106,7 +106,7 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-black text-foreground;
+    @apply bg-night text-foreground;
   }
 }
 
