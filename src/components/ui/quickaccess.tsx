@@ -13,7 +13,7 @@ export default function QuickAccess({image_src, alt_text, link}: QuickAccessProp
                 <div className="w-1/3">
                     <Image className="h-full w-full rounded-sm" src={image_src} alt={alt_text} width={60} height={60}/>
                 </div>
-                <div className="px-2 text-sm w-2/3 flex justify-start items-center text-white font-bold">
+                <div className="px-2 text-xs w-2/3 flex justify-start items-center text-white font-bold">
                     <p>{alt_text}</p>
                 </div>
             </div>
