@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from 'next'
 import { Montserrat } from "next/font/google"
+import SwipeProvider from "@/components/SwipeProvider";
 
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} font-sans`}>
-        {children}
+      <SwipeProvider>
+          {children}
+      </SwipeProvider>
       </body>
     </html>
   );
