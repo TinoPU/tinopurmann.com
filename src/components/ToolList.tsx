@@ -58,7 +58,7 @@ export default async function ToolList() {
         // Extract description
         const descriptionProperty = properties['Description'];
         if (descriptionProperty?.type === 'rich_text' && descriptionProperty.rich_text.length > 0) {
-            description = descriptionProperty.rich_text[0].plain_text;
+            description = descriptionProperty.rich_text.map(text => text.plain_text).join('');
         }
         // Extract category
         const categoryProperty = properties['Category'];
