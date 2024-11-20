@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from 'next'
 import { Montserrat } from "next/font/google"
-import SwipeProvider from "@/components/SwipeProvider";
+import SwipeProvider from "@/components/SwipeProvider/SwipeProvider";
 
 
 export const metadata: Metadata = {

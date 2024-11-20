@@ -75,7 +75,7 @@ export default async function Home() {
     });
 
     return (
-        <div className="overflow-hidden justify-start flex flex-col pl-6 pt-6 pb-6 gap-6">
+        <div className="overflow-hidden justify-start flex flex-col pl-6 pt-6 pb-6 gap-6 no-swipe">
             <ContactGrid />
             <ProjectsGallery projects={projects} />
             <ResourcesGallery />
