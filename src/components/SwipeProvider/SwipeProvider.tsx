@@ -67,7 +67,7 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
             }
 
             const deltaX = (touchCurrentX.current ?? 0) - touchStartX.current;
-            const minSwipeDistance = 100; // Adjust this threshold
+            const minSwipeDistance = 85; // Adjust this threshold
 
             setIsAnimating(true); // Enable animation for snapping back or navigating
 
