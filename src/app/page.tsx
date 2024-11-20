@@ -4,6 +4,7 @@ import ProjectsGallery from "@/components/ProjectsGallery";
 import ResourcesGallery from "@/components/ResourcesGallery";
 import { Client, isFullPage } from '@notionhq/client';
 import {Project} from "@/lib/interfaces";
+import FindMe from "@/components/FindMe";
 
 
 
@@ -79,6 +80,7 @@ export default async function Home() {
             <ContactGrid />
             <ProjectsGallery projects={projects} />
             <ResourcesGallery />
+            <FindMe />
         </div>
     );
 }

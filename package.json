@@ -12,6 +12,7 @@
     "@notionhq/client": "^2.2.15",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@react-google-maps/api": "^2.20.3",
     "@react-spring/web": "^9.5.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
