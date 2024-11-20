@@ -16,6 +16,8 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
     const touchStartX = useRef<number | null>(null);
     const touchCurrentX = useRef<number | null>(null);
     const isNoSwipe = useRef<boolean>(false);
+    const touchStartY = useRef<number | null>(null);
+
 
     // State to control visual feedback
     const [translateX, setTranslateX] = useState(0);
@@ -25,6 +27,8 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
         const handleTouchStart = (e: TouchEvent) => {
             // Check if touch started on an element that should disable swipe
             const targetElement = e.target as HTMLElement;
+            touchStartY.current = e.touches[0].clientY;
+
             if (targetElement.closest('.no-swipe')) {
                 isNoSwipe.current = true;
                 return;
@@ -38,7 +42,11 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
 
         const handleTouchMove = (e: TouchEvent) => {
             if (isNoSwipe.current || touchStartX.current === null) return;
-
+            const deltaY = e.touches[0].clientY - (touchStartY.current ?? 0);
+            if (Math.abs(deltaY) > 10) {
+                // User is scrolling vertically, ignore horizontal swipe
+                return;
+            }
             touchCurrentX.current = e.touches[0].clientX;
             let deltaX = touchCurrentX.current - touchStartX.current;
 
