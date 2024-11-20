@@ -66,7 +66,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                                              textColor={tagColors[index]?.text ?? "#D4D4D4"}/>)
                                     )}
                                 </div>
-                                <Button className="bg-wheat text-onyx font-bold w-full" asChild>
+                                <Button className="bg-wheat text-onyx font-bold w-full pb-6" asChild>
                                     <Link href={tool.link}>Open Website</Link>
                                 </Button>
                             </SheetDescription>
