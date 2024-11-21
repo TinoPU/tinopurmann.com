@@ -1,8 +1,9 @@
+import NeumorphismButton from "@/components/ui/NeumorphismButton";
 
 export default function VoiceNote()  {
     return (
         <div>
-            Coming Soon
+            <NeumorphismButton />
         </div>
     );
 }

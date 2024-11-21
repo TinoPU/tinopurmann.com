@@ -2,7 +2,7 @@
 	 version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
 
   <!-- Background rectangle filling the entire canvas -->
-	<rect x="0" y="0" width="256" height="256" fill="#FFFFFF" />
+	<rect x="0" y="0" width="256" height="256" fill="#F5DDB2" />
 
 	<!-- Group for mic elements with adjusted scaling and translation -->
 	<g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt;
