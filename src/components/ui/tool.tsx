@@ -31,8 +31,8 @@ export default function Tool({tool}: {tool: ToolProps}) {
             </div>
             <div className="flex-grow flex flex-col gap-1 items-start">
                 <Sheet>
-                    <SheetTrigger>
-                        <div className="w-full items-start flex flex-col">
+                    <SheetTrigger className="w-full">
+                        <div className="items-start flex flex-col flex-grow">
                             <div className="font-bold text-sm text-white">{tool.name}</div>
                             <div className="flex flex-row gap-1 flex-wrap">
                                 {tool.tags.slice(0, 3).map((tag, index) => (
