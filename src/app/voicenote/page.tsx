@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
 import dynamic from "next/dynamic";
+import {Trash} from "lucide-react";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
 export default function VoiceNote() {
@@ -143,18 +146,28 @@ export default function VoiceNote() {
     };
 
     return (
-        <div className="h-[100vh] flex flex-col">
+        <div className="h-[100vh] flex flex-col px-6">
             <div className="h-2/3">
                 {isRecording && (<div className="h-full w-full flex items-center justify-center">
                     <Waveform />
                 </div>)}
                 {audioURL && (
-                    <div className="h-full w-full flex items-center justify-center">
-                        <div className="mt-4 flex flex-col items-center">
+                    <div className="h-full w-full flex flex-col items-center justify-center gap-10">
+                        <div className="flex flex-row items-center gap-3">
                             <audio controls src={audioURL}/>
-                            <button onClick={handleDelete} className="text-white mt-2">
-                                Delete
+                            <button onClick={handleDelete} className="text-wheat">
+                            <Trash className="h-9 w-9" />
                             </button>
+                        </div>
+                        <div className="w-full flex flex-col gap-3">
+                            <Input
+                                className="w-full bg-onyx text-white"
+                                placeholder="Name"
+                            />
+                            <Input
+                                className="w-full bg-onyx text-white"
+                                placeholder="Phone Number"
+                            />
                         </div>
                     </div>
                 )}
@@ -167,6 +180,9 @@ export default function VoiceNote() {
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
                 />)}
+                {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7">
+                    Send Note
+                </Button>)}
             </div>
         </div>
     );
