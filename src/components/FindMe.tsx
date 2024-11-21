@@ -4,7 +4,7 @@ import GoogleMapView from "@/components/GoogleMapView";
 import {MapProps} from "@/lib/interfaces";
 
 
-export default function FindMe(location: MapProps) {
+export default function FindMe({location} : {location: MapProps}) {
 
     return (
         <div>

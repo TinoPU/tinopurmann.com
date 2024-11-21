@@ -6,8 +6,9 @@ import { Client, isFullPage } from '@notionhq/client';
 import {Project} from "@/lib/interfaces";
 import FindMe from "@/components/FindMe";
 import {MapProps} from "@/lib/interfaces";
+import {PageObjectResponse} from "@notionhq/client/build/src/api-endpoints";
 
-function getLatestLocation(location_pages: any[]): MapProps | null {
+function getLatestLocation(location_pages: PageObjectResponse[]): MapProps | null {
     if (location_pages.length === 0) return null;
 
     // Get the latest page
@@ -113,7 +114,7 @@ export default async function Home() {
         };
     });
 
-    const latestLocation = getLatestLocation(location_pages);
+    const latestLocation = getLatestLocation(location_pages) ?? { lat: 37.7749, lng: -122.4194 };
 
     return (
         <div className="overflow-hidden justify-start flex flex-col pl-6 pt-6 pb-6 gap-6 no-swipe">
