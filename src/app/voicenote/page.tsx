@@ -2,12 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
+import dynamic from "next/dynamic";
+const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
 export default function VoiceNote() {
+
+
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [audioURL, setAudioURL] = useState<string | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
+    const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
 
     useEffect(() => {
         // Request microphone access and set up MediaRecorder
@@ -91,28 +96,77 @@ export default function VoiceNote() {
             URL.revokeObjectURL(audioURL);
             setAudioURL(null);
         }
+
+        // Stop all tracks of the media stream to release the microphone
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+        }
+
+        // Reset the recorder to allow new recordings
+        setMediaRecorder(null);
+        setMediaStream(null);
+
+        // Set up a new MediaRecorder instance for the next recording
+        const setupRecorder = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                setMediaStream(stream);
+                let mimeType = '';
+
+                if (MediaRecorder.isTypeSupported('audio/mp3')) {
+                    mimeType = 'audio/mp3';
+                } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                    mimeType = 'audio/webm;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+                    mimeType = 'audio/ogg;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                    mimeType = 'audio/mp4';
+                } else {
+                    console.error('No supported MIME type for MediaRecorder found');
+                    alert('Recording is not supported on this browser.');
+                    return;
+                }
+
+                const recorder = new MediaRecorder(stream, { mimeType });
+                setMediaRecorder(recorder);
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                alert('Microphone access is needed to use this feature.');
+            }
+        };
+        setupRecorder();
+        return () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        };
     };
 
     return (
         <div className="h-[100vh] flex flex-col">
             <div className="h-2/3">
+                {isRecording && (<div className="h-full w-full flex items-center justify-center">
+                    <Waveform />
+                </div>)}
                 {audioURL && (
-                    <div className="mt-4 flex flex-col items-center">
-                        <audio controls src={audioURL} />
-                        <button onClick={handleDelete} className="text-white mt-2">
-                            Delete
-                        </button>
+                    <div className="h-full w-full flex items-center justify-center">
+                        <div className="mt-4 flex flex-col items-center">
+                            <audio controls src={audioURL}/>
+                            <button onClick={handleDelete} className="text-white mt-2">
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
             <div className="h-1/3 flex flex-col items-center">
-                <NeumorphismButton
+                {!audioURL && (<NeumorphismButton
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
-                />
+                />)}
             </div>
         </div>
     );
