@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
 
@@ -10,27 +11,54 @@ export default function VoiceNote() {
 
     useEffect(() => {
         // Request microphone access and set up MediaRecorder
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-                const recorder = new MediaRecorder(stream);
+        const setupRecorder = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                let mimeType = '';
+
+
+                if (MediaRecorder.isTypeSupported('audio/mp3')) {
+                    mimeType = 'audio/mp3';
+                }
+                else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                    mimeType = 'audio/webm;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+                    mimeType = 'audio/ogg;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                    mimeType = 'audio/mp4';
+                } else {
+                    console.error('No supported MIME type for MediaRecorder found');
+                    alert('Recording is not supported on this browser.');
+                    return;
+                }
+
+                const recorder = new MediaRecorder(stream, { mimeType });
                 setMediaRecorder(recorder);
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error('Error accessing microphone:', err);
-            });
+                alert('Microphone access is needed to use this feature.');
+            }
+        };
+        setupRecorder();
     }, []);
 
     useEffect(() => {
         if (mediaRecorder) {
             const handleDataAvailable = (event: BlobEvent) => {
-                audioChunksRef.current.push(event.data);
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
             };
 
             const handleStop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/ogg; codecs=opus' });
-                const audioURL = URL.createObjectURL(audioBlob);
-                setAudioURL(audioURL);
-                audioChunksRef.current = []; // Reset chunks
+                try {
+                    const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
+                    const audioURL = URL.createObjectURL(audioBlob);
+                    setAudioURL(audioURL);
+                    audioChunksRef.current = []; // Reset chunks
+                } catch (err) {
+                    console.error('Error creating audio blob:', err);
+                }
             };
 
             mediaRecorder.addEventListener('dataavailable', handleDataAvailable);
