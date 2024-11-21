@@ -1,15 +1,16 @@
 import QuickAccess from "@/components/ui/quickaccess";
 import React from "react";
 import GoogleMapView from "@/components/GoogleMapView";
+import {MapProps} from "@/lib/interfaces";
 
 
-export default function FindMe() {
+export default function FindMe(location: MapProps) {
 
     return (
         <div>
             <div className="text-white text-2xl font-bold">Find me</div>
             <div className="pr-6 rounded-sm">
-                <GoogleMapView lat={37.122} lng={-122.032}/>
+                <GoogleMapView lat={location.lat} lng={location.lng}/>
             </div>
             <div className="grid grid-cols-2 gap-3 pr-6">
                 <div className="flex flex-col gap-3">

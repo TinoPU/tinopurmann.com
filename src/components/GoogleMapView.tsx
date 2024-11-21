@@ -1,20 +1,17 @@
 "use client";
 import dynamic from "next/dynamic";
+import { MapProps } from "@/lib/interfaces";
 
 const LoadScript = dynamic(() => import("@react-google-maps/api").then(mod => mod.LoadScript), { ssr: false });
 const GoogleMap = dynamic(() => import("@react-google-maps/api").then(mod => mod.GoogleMap), { ssr: false });
 const Marker = dynamic(() => import("@react-google-maps/api").then(mod => mod.Marker), { ssr: false });
 
-interface MapProps {
-    lat: number;
-    lng: number;
-}
 
 export default function GoogleMapView(location: MapProps) {
     const mapContainerStyle = {
         width: '100%',
         height: '100%',
-        borderRadius: '2px',
+        borderRadius: '6px',
     };
 
     const center = {

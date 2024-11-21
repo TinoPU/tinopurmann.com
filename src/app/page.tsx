@@ -5,12 +5,29 @@ import ResourcesGallery from "@/components/ResourcesGallery";
 import { Client, isFullPage } from '@notionhq/client';
 import {Project} from "@/lib/interfaces";
 import FindMe from "@/components/FindMe";
+import {MapProps} from "@/lib/interfaces";
 
+function getLatestLocation(location_pages: any[]): MapProps | null {
+    if (location_pages.length === 0) return null;
 
+    // Get the latest page
+    const latestPage = location_pages[location_pages.length - 1];
+    const nameProperty = latestPage.properties['Name'];
+
+    if (nameProperty?.type === 'rich_text' && nameProperty.rich_text.length > 0) {
+        const latLngText = nameProperty.rich_text[0].plain_text;
+        const [lat, lng] = latLngText.split(',').map(Number);
+
+        return { lat, lng };
+    }
+
+    return null;
+}
 
 export default async function Home() {
     const notion = new Client({ auth: process.env.NOTION_TOKEN });
     const databaseId = '14326a26061480f59e93cbe28c76ac63';
+    const locationDBId = '14426a260614809d9c57e0ade3e5a5e6';
 
     // Fetch data on the server side
     const response = await notion.databases.query({
@@ -33,8 +50,29 @@ export default async function Home() {
         ],
     });
 
+    const location_response = await notion.databases.query({
+        database_id: locationDBId,
+        filter: {
+            or: [
+                {
+                    property: 'Name',
+                    rich_text: {
+                        is_not_empty: true,
+                    },
+                }
+            ],
+        },
+        sorts: [
+            {
+                property: 'Created time',
+                direction: 'ascending',
+            },
+        ],
+    });
+
 
     const pages = response.results.filter(isFullPage);
+    const location_pages = location_response.results.filter(isFullPage);
 
     const projects: Project[] = pages.map((page) => {
         const { properties } = page;
@@ -75,12 +113,14 @@ export default async function Home() {
         };
     });
 
+    const latestLocation = getLatestLocation(location_pages);
+
     return (
         <div className="overflow-hidden justify-start flex flex-col pl-6 pt-6 pb-6 gap-6 no-swipe">
             <ContactGrid />
             <ProjectsGallery projects={projects} />
             <ResourcesGallery />
-            <FindMe />
+            <FindMe location={latestLocation} />
         </div>
     );
 }

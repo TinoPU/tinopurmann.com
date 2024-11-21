@@ -20,3 +20,8 @@ export interface ToolProps {
     userColors: string[];
     notes: string;
 }
+
+export interface MapProps {
+    lat: number;
+    lng: number;
+}
