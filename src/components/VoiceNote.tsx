@@ -7,6 +7,7 @@ import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {BlinkBlur} from "react-loading-indicators";
+
 const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
 export default function VoiceNote() {
@@ -18,6 +19,8 @@ export default function VoiceNote() {
     const audioChunksRef = useRef<Blob[]>([]);
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
     const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
+    const [name, setName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
 
     const setupRecorder = async () => {
@@ -27,15 +30,15 @@ export default function VoiceNote() {
             setMediaStream(stream);
             let mimeType = '';
 
-            if (MediaRecorder.isTypeSupported('audio/mp3')) {
-                mimeType = 'audio/mp3';
-            } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-                mimeType = 'audio/webm;codecs=opus';
+            if (MediaRecorder.isTypeSupported('audio/mpeg')) {
+                mimeType = 'audio/mpeg';
             } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
                 mimeType = 'audio/ogg;codecs=opus';
             } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
                 mimeType = 'audio/mp4';
-            } else {
+            } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                mimeType = 'audio/webm;codecs=opus';}
+            else {
                 console.error('No supported MIME type for MediaRecorder found');
                 alert('Recording is not supported on this browser.');
                 return;
@@ -74,6 +77,7 @@ export default function VoiceNote() {
                         return;
                     }
                     const audioBlob = new Blob(audioChunksRef.current, {type: mediaRecorder.mimeType});
+                    console.log('Client-Side Recorded Audio Blob MIME Type:', audioBlob.type);
                     const audioURL = URL.createObjectURL(audioBlob);
                     setAudioURL(audioURL);
                     audioChunksRef.current = []; // Reset chunks
@@ -140,6 +144,67 @@ export default function VoiceNote() {
     };
 }
 
+    const sendMessage = async () => {
+        try {
+            const formData = new FormData();
+            if (audioURL) {
+                const response = await fetch(audioURL);
+                const blob = await response.blob();
+                console.log('Client-Side Recorded Audio Blob MIME Type:', blob.type);
+
+                // Get the MIME type from the blob
+                const mimeType = blob.type;
+
+                // Function to map MIME types to file extensions
+                function getFileExtension(mimeType: string) {
+                    const type = mimeType.split(';')[0];
+                    switch (type) {
+                        case 'audio/mpeg':
+                            return 'mp3';
+                        case 'audio/webm':
+                            return 'webm';
+                        case 'audio/ogg':
+                            return 'ogg';
+                        case 'audio/mp4':
+                            return 'm4a';
+                        default:
+                            return 'dat';
+                    }
+                }
+
+                // Get the file extension based on MIME type
+                const extension = getFileExtension(mimeType);
+                const filename = `audio.${extension}`;
+
+                // Append the audio blob with the correct filename
+                formData.append('audio', blob, filename);
+            }
+            formData.append('name', name);
+            formData.append('phoneNumber', phoneNumber);
+
+            const response = await fetch('/api/sendnote', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Message sent successfully!');
+            } else {
+                console.error('Error:', result.error);
+                alert(`Failed to send message: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An unexpected error occurred.');
+        } finally {
+            // setLoading(false);
+        }
+    };
+
+
+
     return isRecorderReady ? (
          <div className="h-[60vh] flex flex-col px-6">
             <div className="h-2/3">
@@ -158,10 +223,14 @@ export default function VoiceNote() {
                             <Input
                                 className="w-full bg-onyx text-white"
                                 placeholder="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                             <Input
                                 className="w-full bg-onyx text-white"
                                 placeholder="Phone Number"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
                             />
                         </div>
                     </div>
@@ -175,7 +244,7 @@ export default function VoiceNote() {
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
                 />)}
-                {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7">
+                {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
                 </Button>)}
             </div>

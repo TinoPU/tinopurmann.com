@@ -27,3 +27,4 @@ export function notionColorConversion(color: string): ColorScheme | undefined {
 
   return colorMap[color];
 }
+
