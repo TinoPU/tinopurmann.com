@@ -6,48 +6,54 @@ import dynamic from "next/dynamic";
 import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {BlinkBlur} from "react-loading-indicators";
 const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
 export default function VoiceNote() {
 
-
+    const [isRecorderReady, setIsRecorderReady] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [audioURL, setAudioURL] = useState<string | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+    const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
+
+
+    const setupRecorder = async () => {
+        try {
+            setIsRecorderReady(false);
+            const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+            setMediaStream(stream);
+            let mimeType = '';
+
+            if (MediaRecorder.isTypeSupported('audio/mp3')) {
+                mimeType = 'audio/mp3';
+            } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                mimeType = 'audio/webm;codecs=opus';
+            } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+                mimeType = 'audio/ogg;codecs=opus';
+            } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                mimeType = 'audio/mp4';
+            } else {
+                console.error('No supported MIME type for MediaRecorder found');
+                alert('Recording is not supported on this browser.');
+                return;
+            }
+
+            const recorder = new MediaRecorder(stream, {mimeType});
+            setMediaRecorder(recorder);
+            setIsRecorderReady(true);
+        } catch (err) {
+            console.error('Error accessing microphone:', err);
+            alert('Microphone access is needed to use this feature.');
+        }
+    };
+
 
     useEffect(() => {
         // Request microphone access and set up MediaRecorder
-        const setupRecorder = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                let mimeType = '';
-
-
-                if (MediaRecorder.isTypeSupported('audio/mp3')) {
-                    mimeType = 'audio/mp3';
-                }
-                else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-                    mimeType = 'audio/webm;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
-                    mimeType = 'audio/ogg;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-                    mimeType = 'audio/mp4';
-                } else {
-                    console.error('No supported MIME type for MediaRecorder found');
-                    alert('Recording is not supported on this browser.');
-                    return;
-                }
-
-                const recorder = new MediaRecorder(stream, { mimeType });
-                setMediaRecorder(recorder);
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                alert('Microphone access is needed to use this feature.');
-            }
-        };
-        setupRecorder();
+        setupRecorder()
     }, []);
 
     useEffect(() => {
@@ -60,12 +66,20 @@ export default function VoiceNote() {
 
             const handleStop = () => {
                 try {
-                    const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
+                    if (audioChunksRef.current.length === 0) {
+                        console.warn('No audio data was recorded.');
+                        // alert('Recording was too short. Please record again.');
+                        setIsRecording(false);
+                        setAudioURL(null);
+                        return;
+                    }
+                    const audioBlob = new Blob(audioChunksRef.current, {type: mediaRecorder.mimeType});
                     const audioURL = URL.createObjectURL(audioBlob);
                     setAudioURL(audioURL);
                     audioChunksRef.current = []; // Reset chunks
                 } catch (err) {
                     console.error('Error creating audio blob:', err);
+                    setAudioURL(null);
                 }
             };
 
@@ -80,18 +94,29 @@ export default function VoiceNote() {
     }, [mediaRecorder]);
 
     const handlePressStart = () => {
-        if (mediaRecorder && mediaRecorder.state === 'inactive') {
-            audioChunksRef.current = []; // Reset chunks
-            mediaRecorder.start();
-            setIsRecording(true);
+        if (!isRecorderReady || !mediaRecorder || mediaRecorder.state !== 'inactive') {
+            return;
         }
+        setAudioURL(null);
+        audioChunksRef.current = []; // Reset chunks
+        mediaRecorder.start();
+        setRecordingStartTime(Date.now());
+        setIsRecording(true);
     };
 
     const handlePressEnd = () => {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
+        if (!isRecorderReady || !mediaRecorder || mediaRecorder.state !== 'recording') {
+            return;
+        }
+        const recordingDuration = Date.now() - (recordingStartTime || 0);
+        if (recordingDuration < 1000) { // 1 second minimum
+            // alert('Recording is too short. Please record for at least 1 second.');
             mediaRecorder.stop();
             setIsRecording(false);
+            return;
         }
+        mediaRecorder.stop();
+        setIsRecording(false);
     };
 
     const handleDelete = () => {
@@ -99,7 +124,6 @@ export default function VoiceNote() {
             URL.revokeObjectURL(audioURL);
             setAudioURL(null);
         }
-
         // Stop all tracks of the media stream to release the microphone
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
@@ -108,55 +132,26 @@ export default function VoiceNote() {
         // Reset the recorder to allow new recordings
         setMediaRecorder(null);
         setMediaStream(null);
-
-        // Set up a new MediaRecorder instance for the next recording
-        const setupRecorder = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                setMediaStream(stream);
-                let mimeType = '';
-
-                if (MediaRecorder.isTypeSupported('audio/mp3')) {
-                    mimeType = 'audio/mp3';
-                } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-                    mimeType = 'audio/webm;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
-                    mimeType = 'audio/ogg;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-                    mimeType = 'audio/mp4';
-                } else {
-                    console.error('No supported MIME type for MediaRecorder found');
-                    alert('Recording is not supported on this browser.');
-                    return;
-                }
-
-                const recorder = new MediaRecorder(stream, { mimeType });
-                setMediaRecorder(recorder);
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                alert('Microphone access is needed to use this feature.');
-            }
-        };
         setupRecorder();
-        return () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
-        };
+    return () => {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+        }
     };
+}
 
-    return (
-        <div className="h-[100vh] flex flex-col px-6">
+    return isRecorderReady ? (
+         <div className="h-[60vh] flex flex-col px-6">
             <div className="h-2/3">
                 {isRecording && (<div className="h-full w-full flex items-center justify-center">
                     <Waveform />
                 </div>)}
                 {audioURL && (
                     <div className="h-full w-full flex flex-col items-center justify-center gap-10">
-                        <div className="flex flex-row items-center gap-3">
+                        <div className="flex flex-col items-center gap-3">
                             <audio controls src={audioURL}/>
                             <button onClick={handleDelete} className="text-wheat">
-                            <Trash className="h-9 w-9" />
+                                <Trash className="h-8 w-8" />
                             </button>
                         </div>
                         <div className="w-full flex flex-col gap-3">
@@ -184,6 +179,9 @@ export default function VoiceNote() {
                     Send Note
                 </Button>)}
             </div>
-        </div>
+        </div>) : (
+            <div className="h-[60vh] flex items-center justify-center">
+                <BlinkBlur color="#F5DDB2" size="medium" text="" textColor="" />
+            </div>
     );
 }

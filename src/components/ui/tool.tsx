@@ -55,6 +55,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                             </SheetTitle>
                             <SheetDescription>
                                 {tool.description}
+                            </SheetDescription>
                                 <div className="text-lg text-white py-2">Category</div>
                                 <Tag tagName={tool.category} bgColor={categoryColors?.background ?? "#191919"}
                                      textColor={categoryColors?.text ?? "#D4D4D4"}/>
@@ -69,7 +70,6 @@ export default function Tool({tool}: {tool: ToolProps}) {
                                 <Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" asChild>
                                     <Link href={tool.link}>Open Website</Link>
                                 </Button>
-                            </SheetDescription>
                         </SheetHeader>
                     </SheetContent>
                 </Sheet>

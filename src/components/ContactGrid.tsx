@@ -1,13 +1,13 @@
 import QuickAccess from "@/components/ui/quickaccess";
 import React from "react";
+import VoiceRecorder from "@/components/VoiceRecorder";
 
 
 export default function ContactGrid() {
     return (
         <div className="grid grid-cols-2 gap-3 pr-6">
             <div className="flex flex-col gap-3">
-                <QuickAccess image_src="/assets/contact/microphone.svg" alt_text="Leave a note"
-                             link="/voicenote"/>
+                <VoiceRecorder />
                 <QuickAccess image_src="/assets/contact/calendly.svg" alt_text="Calendly"
                              link="https://calendly.com/tino-p1q/30min"/>
             </div>

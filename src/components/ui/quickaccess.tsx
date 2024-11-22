@@ -3,7 +3,7 @@ import Image from "next/image";
 interface QuickAccessProps {
     image_src: string;
     alt_text: string;
-    link: string;
+    link?: string;
 }
 
 export default function QuickAccess({image_src, alt_text, link}: QuickAccessProps) {

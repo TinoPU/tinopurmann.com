@@ -6,24 +6,7 @@ import { Client, isFullPage } from '@notionhq/client';
 import {Project} from "@/lib/interfaces";
 import FindMe from "@/components/FindMe";
 import {MapProps} from "@/lib/interfaces";
-import {PageObjectResponse} from "@notionhq/client/build/src/api-endpoints";
 
-function getLatestLocation(location_pages: PageObjectResponse[]): MapProps | null {
-    if (location_pages.length === 0) return null;
-
-    // Get the latest page
-    const latestPage = location_pages[location_pages.length - 1];
-    const nameProperty = latestPage.properties['Name'];
-
-    if (nameProperty?.type === 'rich_text' && nameProperty.rich_text.length > 0) {
-        const latLngText = nameProperty.rich_text[0].plain_text;
-        const [lat, lng] = latLngText.split(',').map(Number);
-
-        return { lat, lng };
-    }
-
-    return null;
-}
 
 export default async function Home() {
     const notion = new Client({ auth: process.env.NOTION_TOKEN });
@@ -66,7 +49,7 @@ export default async function Home() {
         sorts: [
             {
                 property: 'Created time',
-                direction: 'ascending',
+                direction: 'descending',
             },
         ],
     });
@@ -114,7 +97,17 @@ export default async function Home() {
         };
     });
 
-    const latestLocation = getLatestLocation(location_pages) ?? { lat: 37.7749, lng: -122.4194 };
+    const defaultLocation: MapProps = { lat: 45.578515, lng: -61.233523 };
+
+
+    const latestLocation: MapProps | null = location_pages.length > 0 ? (() => {
+        const nameProperty = location_pages[0].properties['Name'];
+        if (nameProperty?.type === 'title' && nameProperty.title.length > 0) {
+            const [lat, lng] = nameProperty.title[0].plain_text.split(',').map(parseFloat);
+            return { lat, lng };
+        }
+        return defaultLocation
+    })() : defaultLocation;
 
     return (
         <div className="overflow-hidden justify-start flex flex-col pl-6 pt-6 pb-6 gap-6 no-swipe">
