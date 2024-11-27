@@ -53,7 +53,7 @@ export default async function sendWhatsAppMessage(
         }
 
         // Define the destination directory and file path
-        const destinationDir = path.join(process.cwd(), '/tmp');
+        const destinationDir = '/tmp';
         const fileExtension = path.extname(audioFile.originalFilename || '.audio');
         const destinationFilename = audioFile.newFilename + fileExtension;
         const destinationPath = path.join(destinationDir, destinationFilename);
