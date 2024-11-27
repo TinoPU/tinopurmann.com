@@ -10,6 +10,11 @@ import {BlinkBlur} from "react-loading-indicators";
 
 const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
+interface AudioDevice {
+    id: string;
+    name: string;
+}
+
 export default function VoiceNote() {
 
     const [isRecorderReady, setIsRecorderReady] = useState(false);
@@ -21,17 +26,77 @@ export default function VoiceNote() {
     const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+    const [microphonePermissionState, setMicrophonePermissionState] = useState<PermissionState | null>(null);
+    const [availableAudioDevices, setAvailableAudioDevices] = useState<AudioDevice[]>([]);
+    const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(null);
+
+
+    // Get Available Audio Devices
+    function getAvailableAudioDevices(): Promise<AudioDevice[]> {
+        return new Promise<AudioDevice[]>((resolve) => {
+            navigator.mediaDevices.enumerateDevices().then((devices) => {
+                const availableDevices = devices
+                    .filter((d) => d.kind === 'audioinput')
+                    .map((d) => {
+                        return {
+                            id: d.deviceId,
+                            name: d.label,
+                        };
+                    });
+                resolve(availableDevices);
+            });
+        });
+    }
+
+    // Handle Permission State
+    function handlePermissionState(state: "granted" | "denied" | "prompt") {
+        setMicrophonePermissionState(state);
+        console.log('Microphone Permission State:', microphonePermissionState);
+        if (state === "granted") {
+            getAvailableAudioDevices().then((devices) => {
+                setAvailableAudioDevices(devices);
+                console.log('Available Audio Devices:', availableAudioDevices);
+                if (devices.length > 0) {
+                    const defaultDeviceId = devices.find((device) => device.id === 'default')?.id ?? null;
+                    setSelectedAudioDevice(defaultDeviceId);
+                    console.log('Selected Audio Device:', defaultDeviceId);
+                }
+            });
+        }
+    }
+
+
+    useEffect(() => {
+        navigator.permissions.query({name: 'microphone' as PermissionName}).then((function (queryResults) {
+            handlePermissionState(queryResults.state);
+            queryResults.onchange = function (onChangeResult) {
+                if (onChangeResult.target) {
+                    handlePermissionState((onChangeResult.target as PermissionStatus).state);
+                }
+            };
+        }));
+    }, [selectedAudioDevice]);
+
+
+
+
+
 
 
     const setupRecorder = async () => {
         try {
             setIsRecorderReady(false);
-            const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+            const audio = selectedAudioDevice && selectedAudioDevice.length > 0
+                ? { deviceId: selectedAudioDevice }
+                : true;
+            const stream = await navigator.mediaDevices.getUserMedia({ audio });
+
             setMediaStream(stream);
             let mimeType = '';
 
             if (MediaRecorder.isTypeSupported('audio/mpeg')) {
-                mimeType = 'audio/mpeg';
+                mimeType = 'audio/webm';
             } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
                 mimeType = 'audio/ogg;codecs=opus';
             } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
@@ -63,6 +128,7 @@ export default function VoiceNote() {
         if (mediaRecorder) {
             const handleDataAvailable = (event: BlobEvent) => {
                 if (event.data.size > 0) {
+                    console.log('Received audio chunk:', event.data.size, 'bytes');
                     audioChunksRef.current.push(event.data);
                 }
             };
@@ -71,13 +137,13 @@ export default function VoiceNote() {
                 try {
                     if (audioChunksRef.current.length === 0) {
                         console.warn('No audio data was recorded.');
-                        // alert('Recording was too short. Please record again.');
                         setIsRecording(false);
                         setAudioURL(null);
                         return;
                     }
-                    const audioBlob = new Blob(audioChunksRef.current, {type: mediaRecorder.mimeType});
-                    console.log('Client-Side Recorded Audio Blob MIME Type:', audioBlob.type);
+                    const audioBlob = new Blob(audioChunksRef.current, {type: audioChunksRef.current[0].type});
+                    console.log('Created Audio Blob:', audioBlob.size, 'bytes, Type:', audioBlob.type);
+                    setAudioBlob(audioBlob); // Ensure this state is set
                     const audioURL = URL.createObjectURL(audioBlob);
                     setAudioURL(audioURL);
                     audioChunksRef.current = []; // Reset chunks
@@ -96,6 +162,7 @@ export default function VoiceNote() {
             };
         }
     }, [mediaRecorder]);
+
 
     const handlePressStart = () => {
         if (!isRecorderReady || !mediaRecorder || mediaRecorder.state !== 'inactive') {
@@ -147,13 +214,11 @@ export default function VoiceNote() {
     const sendMessage = async () => {
         try {
             const formData = new FormData();
-            if (audioURL) {
-                const response = await fetch(audioURL);
-                const blob = await response.blob();
-                console.log('Client-Side Recorded Audio Blob MIME Type:', blob.type);
+            if (audioBlob) {
+                console.log('Client-Side Recorded Audio Blob MIME Type:', audioBlob.type);
 
                 // Get the MIME type from the blob
-                const mimeType = blob.type;
+                const mimeType = audioBlob.type;
 
                 // Function to map MIME types to file extensions
                 function getFileExtension(mimeType: string) {
@@ -166,7 +231,7 @@ export default function VoiceNote() {
                         case 'audio/ogg':
                             return 'ogg';
                         case 'audio/mp4':
-                            return 'm4a';
+                            return 'mp4';
                         default:
                             return 'dat';
                     }
@@ -177,7 +242,7 @@ export default function VoiceNote() {
                 const filename = `audio.${extension}`;
 
                 // Append the audio blob with the correct filename
-                formData.append('audio', blob, filename);
+                formData.append('audio', audioBlob, filename);
             }
             formData.append('name', name);
             formData.append('phoneNumber', phoneNumber);
@@ -202,6 +267,7 @@ export default function VoiceNote() {
             // setLoading(false);
         }
     };
+
 
 
 
@@ -236,7 +302,7 @@ export default function VoiceNote() {
                     </div>
                 )}
             </div>
-            <div className="h-1/3 flex flex-col items-center">
+            <div className="h-1/3 flex flex-col items-center select-none">
                 {!audioURL && (<NeumorphismButton
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}

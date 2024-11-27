@@ -1,9 +1,17 @@
 // Import required modules
 import type { NextApiRequest, NextApiResponse } from 'next';
-import formidable from 'formidable';
+import formidable, { Fields, Files } from 'formidable';
 import axios from 'axios';
 import fs from 'fs';
 import FormData from 'form-data';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
+
+import path from 'path';
+
 
 export const config = {
     api: {
@@ -21,14 +29,16 @@ export default async function sendWhatsAppMessage(
 
     const form = formidable({ multiples: true });
 
-    form.parse(req, async (err, fields, files) => {
+    form.parse(req, async (err, fields: Fields, files: Files) => {
+
+
         if (err) {
             console.error('Error parsing form data:', err);
             return res.status(400).json({ error: 'Error parsing form data' });
         }
 
         const { name, phoneNumber } = fields;
-        let audioFile = files.audio as formidable.File | formidable.File[];
+        let audioFile: formidable.File | formidable.File[] | undefined = files.audio;
 
         if (!name || !phoneNumber || !audioFile) {
             return res.status(400).json({ error: 'Missing data in request' });
@@ -41,6 +51,44 @@ export default async function sendWhatsAppMessage(
         if (!audioFile) {
             return res.status(400).json({ error: 'Missing audio file in request' });
         }
+
+        // Define the destination directory and file path
+        const destinationDir = path.join(process.cwd(), 'uploads');
+        const fileExtension = path.extname(audioFile.originalFilename || '.audio');
+        const destinationFilename = audioFile.newFilename + fileExtension;
+        const destinationPath = path.join(destinationDir, destinationFilename);
+
+        try {
+            // Ensure the destination directory exists
+            if (!fs.existsSync(destinationDir)) {
+                fs.mkdirSync(destinationDir, { recursive: true });
+            }
+
+            // Copy the file to the destination directory
+            fs.copyFileSync(audioFile.filepath, destinationPath);
+            console.log('File saved to', destinationPath);
+        } catch (err) {
+            console.error('Error saving file:', err);
+            // Handle the error appropriately
+        }
+
+        const outputPath = path.join(destinationDir, `${audioFile.newFilename}.mp3`);
+        // Convert to OPUS format
+        await new Promise<void>((resolve, reject) => {
+            ffmpeg(destinationPath)
+                .outputOptions('-c:a libmp3lame') // Use MP3 codec
+                .outputOptions('-q:a 2') // Quality (0 = best, 9 = worst)
+                .save(outputPath)
+                .on('end', () => {
+                    resolve();
+                })
+                .on('error', (err: Error) => {
+                    reject(err);
+                });
+
+        });
+
+        console.log('Audio converted to MP3:', outputPath);
 
 
         // Retrieve environment variables
@@ -60,13 +108,17 @@ export default async function sendWhatsAppMessage(
             mediaFormData.append('messaging_product', 'whatsapp');
 
             // Read the file
-            const fileStream = fs.createReadStream(audioFile.filepath);
+            const fileStream = fs.createReadStream(outputPath);
+
+            // Get the stats of the converted file
+            const stats = fs.statSync(outputPath);
+            const fileSizeInBytes = stats.size;
 
             // Append the file with correct options
             mediaFormData.append('file', fileStream, {
-                filename: audioFile.originalFilename || 'audio.m4a',
-                contentType: audioFile.mimetype || 'audio/mp4',
-                knownLength: audioFile.size,
+                filename: `${name}.mp3` || 'audio.mp3',
+                contentType: 'audio/mpeg',
+                knownLength: fileSizeInBytes,
             });
 
             // Get headers from FormData
