@@ -38,6 +38,7 @@ const NeumorphismButton: React.FC<NeumorphismButtonProps> = ({
         active:text-wheat
         active:ring-wheat
         bg-onyx
+        select-none
         ${className}
     `}
         >
