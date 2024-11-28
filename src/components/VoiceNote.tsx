@@ -9,7 +9,6 @@ import {Button} from "@/components/ui/button";
 import {BlinkBlur} from "react-loading-indicators";
 import AudioVisualizer from "@/components/ui/AudioVisualizer";
 
-const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
 interface AudioDevice {
     id: string;
@@ -104,7 +103,6 @@ export default function VoiceNote() {
 
             // Create an AnalyserNode
             const analyser = audioCtx.createAnalyser();
-            analyser.smoothingTimeConstant = 0.85; // Adjust for desired smoothness
             analyser.fftSize = 1024; // Adjust for desired frequency resolution
             setAnalyserNode(analyser);
 
@@ -137,9 +135,10 @@ export default function VoiceNote() {
 
 
     useEffect(() => {
-        // Request microphone access and set up MediaRecorder
-        setupRecorder()
-    }, []);
+        if (selectedAudioDevice !== null) {
+            setupRecorder();
+        }
+    }, [selectedAudioDevice]);
 
     useEffect(() => {
         if (mediaRecorder) {
@@ -299,8 +298,8 @@ export default function VoiceNote() {
 
     return isRecorderReady ? (
          <div className="h-[60vh] flex flex-col px-6">
-            <div className="h-2/3">
-                {isRecording && (<div className="h-full w-full flex items-center justify-center px-3">
+            <div className="h-2/3 flex items-center justify-center">
+                {isRecording && (<div className="h-1/3 w-full flex items-center justify-center px-3">
                     <AudioVisualizer analyserNode={analyserNode} />
                 </div>)}
                 {audioURL && (
