@@ -29,7 +29,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ analyserNode }) => {
 
             canvasCtx.beginPath();
 
-            const sliceWidth = (canvas.width * 3.0) / bufferLength;
+            const sliceWidth = (canvas.width * 2.0) / bufferLength;
             let previousX = 0;
             let previousY = (dataArray[0] / 128.0) * (canvas.height / 2);
 

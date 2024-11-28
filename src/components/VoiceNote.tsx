@@ -99,7 +99,7 @@ export default function VoiceNote() {
 
             // Create an AnalyserNode
             const analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 1024; // Adjust for desired frequency resolution
+            analyser.fftSize = 2048; // Adjust for desired frequency resolution
             setAnalyserNode(analyser);
 
             // Connect the stream to the AudioContext
