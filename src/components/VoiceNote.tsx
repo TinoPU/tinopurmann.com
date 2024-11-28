@@ -76,7 +76,7 @@ export default function VoiceNote() {
                 }
             };
         }));
-    }, [handlePermissionState, selectedAudioDevice]);
+    }, [selectedAudioDevice]);
 
 
 
@@ -122,7 +122,7 @@ export default function VoiceNote() {
     useEffect(() => {
         // Request microphone access and set up MediaRecorder
         setupRecorder()
-    }, [setupRecorder]);
+    }, []);
 
     useEffect(() => {
         if (mediaRecorder) {
