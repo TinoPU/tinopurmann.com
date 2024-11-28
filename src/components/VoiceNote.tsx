@@ -2,18 +2,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
-import dynamic from "next/dynamic";
 import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {BlinkBlur} from "react-loading-indicators";
 import AudioVisualizer from "@/components/ui/AudioVisualizer";
+import MicSelect from "@/components/ui/MicSelect";
+import {AudioDevice} from "@/lib/interfaces";
 
-
-interface AudioDevice {
-    id: string;
-    name: string;
-}
 
 export default function VoiceNote() {
 
@@ -59,7 +55,7 @@ export default function VoiceNote() {
             getAvailableAudioDevices().then((devices) => {
                 setAvailableAudioDevices(devices);
                 console.log('Available Audio Devices:', availableAudioDevices);
-                if (devices.length > 0) {
+                if (devices.length > 0 && !selectedAudioDevice) {
                     const defaultDeviceId = devices.find((device) => device.id === 'default')?.id ?? null;
                     setSelectedAudioDevice(defaultDeviceId);
                     console.log('Selected Audio Device:', defaultDeviceId);
@@ -98,7 +94,7 @@ export default function VoiceNote() {
             let mimeType = '';
 
             // Create an AudioContext
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioCtx = new (window.AudioContext)();
             setAudioContext(audioCtx);
 
             // Create an AnalyserNode
@@ -135,9 +131,7 @@ export default function VoiceNote() {
 
 
     useEffect(() => {
-        if (selectedAudioDevice !== null) {
-            setupRecorder();
-        }
+        setupRecorder()
     }, [selectedAudioDevice]);
 
     useEffect(() => {
@@ -297,9 +291,9 @@ export default function VoiceNote() {
 
 
     return isRecorderReady ? (
-         <div className="h-[60vh] flex flex-col px-6">
-            <div className="h-2/3 flex items-center justify-center">
-                {isRecording && (<div className="h-1/3 w-full flex items-center justify-center px-3">
+         <div className="h-[70vh] flex flex-col px-6">
+            <div className="h-1/2 flex items-center justify-center">
+                {isRecording && analyserNode && (<div className="h-1/3 w-full flex items-center justify-center px-3">
                     <AudioVisualizer analyserNode={analyserNode} />
                 </div>)}
                 {audioURL && (
@@ -327,14 +321,18 @@ export default function VoiceNote() {
                     </div>
                 )}
             </div>
-            <div className="h-1/3 flex flex-col items-center text-select-disabled">
-                {!audioURL && (<NeumorphismButton
+            <div className="h-1/2 flex flex-col items-center text-select-disabled">
+                {!audioURL && (<div className="flex flex-col items-center gap-6">
+                    <p className="text-slate-500 text-xs">Press and Hold to Record</p>
+                    <NeumorphismButton
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
-                />)}
+                />
+                <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
+                    </div>)}
                 {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
                 </Button>)}
