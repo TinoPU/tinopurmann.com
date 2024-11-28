@@ -335,7 +335,7 @@ export default function VoiceNote() {
                     <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
                 )}
                 </div>)}
-                {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" onClick={sendMessage}>
+                {audioURL && (<Button className="w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
                 </Button>)}
             </div>
