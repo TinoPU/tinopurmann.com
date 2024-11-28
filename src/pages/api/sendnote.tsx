@@ -57,7 +57,6 @@ export default async function sendWhatsAppMessage(
         const fileExtension = path.extname(audioFile.originalFilename || '.audio');
         const destinationFilename = audioFile.newFilename + fileExtension;
         const destinationPath = path.join(destinationDir, destinationFilename);
-
         try {
             // Ensure the destination directory exists
             if (!fs.existsSync(destinationDir)) {

@@ -25,3 +25,8 @@ export interface MapProps {
     lat: number;
     lng: number;
 }
+
+export interface AudioDevice {
+    id: string;
+    name: string;
+}

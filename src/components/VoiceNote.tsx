@@ -2,18 +2,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
-import dynamic from "next/dynamic";
 import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {BlinkBlur} from "react-loading-indicators";
+import AudioVisualizer from "@/components/ui/AudioVisualizer";
+import MicSelect from "@/components/ui/MicSelect";
+import {AudioDevice} from "@/lib/interfaces";
 
-const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
-
-interface AudioDevice {
-    id: string;
-    name: string;
-}
 
 export default function VoiceNote() {
 
@@ -30,6 +26,8 @@ export default function VoiceNote() {
     const [microphonePermissionState, setMicrophonePermissionState] = useState<PermissionState | null>(null);
     const [availableAudioDevices, setAvailableAudioDevices] = useState<AudioDevice[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(null);
+    const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+    const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
 
     // Get Available Audio Devices
@@ -57,7 +55,7 @@ export default function VoiceNote() {
             getAvailableAudioDevices().then((devices) => {
                 setAvailableAudioDevices(devices);
                 console.log('Available Audio Devices:', availableAudioDevices);
-                if (devices.length > 0) {
+                if (devices.length > 0 && !selectedAudioDevice) {
                     const defaultDeviceId = devices.find((device) => device.id === 'default')?.id ?? null;
                     setSelectedAudioDevice(defaultDeviceId);
                     console.log('Selected Audio Device:', defaultDeviceId);
@@ -95,6 +93,19 @@ export default function VoiceNote() {
             setMediaStream(stream);
             let mimeType = '';
 
+            // Create an AudioContext
+            const audioCtx = new (window.AudioContext)();
+            setAudioContext(audioCtx);
+
+            // Create an AnalyserNode
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 1024; // Adjust for desired frequency resolution
+            setAnalyserNode(analyser);
+
+            // Connect the stream to the AudioContext
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
+
             if (MediaRecorder.isTypeSupported('audio/mpeg')) {
                 mimeType = 'audio/webm';
             } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
@@ -120,9 +131,8 @@ export default function VoiceNote() {
 
 
     useEffect(() => {
-        // Request microphone access and set up MediaRecorder
         setupRecorder()
-    }, []);
+    }, [selectedAudioDevice]);
 
     useEffect(() => {
         if (mediaRecorder) {
@@ -200,6 +210,15 @@ export default function VoiceNote() {
             mediaStream.getTracks().forEach(track => track.stop());
         }
 
+        // Close the AudioContext
+        if (audioContext) {
+            audioContext.close();
+            setAudioContext(null);
+        }
+
+        // Reset the AnalyserNode
+        setAnalyserNode(null);
+
         // Reset the recorder to allow new recordings
         setMediaRecorder(null);
         setMediaStream(null);
@@ -272,10 +291,10 @@ export default function VoiceNote() {
 
 
     return isRecorderReady ? (
-         <div className="h-[60vh] flex flex-col px-6">
-            <div className="h-2/3">
-                {isRecording && (<div className="h-full w-full flex items-center justify-center">
-                    <Waveform />
+         <div className="h-[70vh] flex flex-col px-6">
+            <div className="h-1/2 flex items-center justify-center">
+                {isRecording && analyserNode && (<div className="h-1/3 w-full flex items-center justify-center px-3">
+                    <AudioVisualizer analyserNode={analyserNode} />
                 </div>)}
                 {audioURL && (
                     <div className="h-full w-full flex flex-col items-center justify-center gap-10">
@@ -302,14 +321,18 @@ export default function VoiceNote() {
                     </div>
                 )}
             </div>
-            <div className="h-1/3 flex flex-col items-center select-none">
-                {!audioURL && (<NeumorphismButton
+            <div className="h-1/2 flex flex-col items-center text-select-disabled">
+                {!audioURL && (<div className="flex flex-col items-center gap-6">
+                    <p className="text-slate-500 text-xs">Press and Hold to Record</p>
+                    <NeumorphismButton
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
-                />)}
+                />
+                <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
+                    </div>)}
                 {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
                 </Button>)}
