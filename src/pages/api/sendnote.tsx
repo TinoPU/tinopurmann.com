@@ -87,7 +87,6 @@ export default async function sendWhatsAppMessage(
 
         });
 
-        console.log('Audio converted to MP3:', outputPath);
 
 
         // Retrieve environment variables
@@ -129,8 +128,6 @@ export default async function sendWhatsAppMessage(
                 Authorization: `Bearer ${accessToken}`,
             };
 
-            // Log the headers for debugging
-            console.log('Headers being sent to WhatsApp media endpoint:', headers);
 
             // Send the request
             const mediaResponse = await axios.post(mediaUploadUrl, mediaFormData, {
@@ -138,10 +135,6 @@ export default async function sendWhatsAppMessage(
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
             });
-
-            await new Promise((resolve) => setTimeout(resolve, 5000));
-
-            console.log('Media upload response:', mediaResponse.data);
 
             const mediaId = mediaResponse.data.id;
 
@@ -158,15 +151,12 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            const audioMessageResponse = await axios.post(messageUrl, audioMessageData, {
+            await axios.post(messageUrl, audioMessageData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
                 },
             });
-            console.log('Audio message response:', audioMessageResponse.data);
-            console.log(audioFile)
-            console.log(audioFile.filepath)
 
             // Send name as text message
             const nameMessageData = {
@@ -178,14 +168,13 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            const NameMessageResponse = await axios.post(messageUrl, nameMessageData, {
+            await axios.post(messageUrl, nameMessageData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
                 },
             });
 
-            console.log('Name message response:', NameMessageResponse.data);
 
 
             // Send phone number as text message
@@ -198,13 +187,12 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            const PhoneMessageResponse = await axios.post(messageUrl, phoneMessageData, {
+            await axios.post(messageUrl, phoneMessageData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
                 },
             });
-            console.log('Phone message response:', PhoneMessageResponse.data);
 
 
             return res.status(200).json({ message: 'Messages sent successfully' });
