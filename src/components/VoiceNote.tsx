@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import NeumorphismButton from "@/components/ui/NeumorphismButton";
 import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
@@ -9,9 +9,10 @@ import {BlinkBlur} from "react-loading-indicators";
 import AudioVisualizer from "@/components/ui/AudioVisualizer";
 import MicSelect from "@/components/ui/MicSelect";
 import {AudioDevice} from "@/lib/interfaces";
+import {Label} from "@/components/ui/label";
 
 
-export default function VoiceNote() {
+export default function VoiceNote({onClose}: {onClose: () => void}) {
 
     const [isRecorderReady, setIsRecorderReady] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
@@ -23,11 +24,13 @@ export default function VoiceNote() {
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-    const [microphonePermissionState, setMicrophonePermissionState] = useState<PermissionState | null>(null);
     const [availableAudioDevices, setAvailableAudioDevices] = useState<AudioDevice[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(null);
     const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
     const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
+    const [messageSentSuccessfully, setMessageSentSuccessfully] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [sendButtonDisabled, setSendButtonDisabled] = useState(true);
 
 
     // Get Available Audio Devices
@@ -48,21 +51,17 @@ export default function VoiceNote() {
     }
 
     // Handle Permission State
-    function handlePermissionState(state: "granted" | "denied" | "prompt") {
-        setMicrophonePermissionState(state);
-        console.log('Microphone Permission State:', microphonePermissionState);
+    const handlePermissionState = useCallback((state: "granted" | "denied" | "prompt") => {
         if (state === "granted") {
             getAvailableAudioDevices().then((devices) => {
                 setAvailableAudioDevices(devices);
-                console.log('Available Audio Devices:', availableAudioDevices);
                 if (devices.length > 0 && !selectedAudioDevice) {
                     const defaultDeviceId = devices.find((device) => device.id === 'default')?.id ?? null;
                     setSelectedAudioDevice(defaultDeviceId);
-                    console.log('Selected Audio Device:', defaultDeviceId);
                 }
             });
         }
-    }
+    },[selectedAudioDevice]);
 
 
     useEffect(() => {
@@ -74,19 +73,14 @@ export default function VoiceNote() {
                 }
             };
         }));
-    }, [selectedAudioDevice]);
+    }, [handlePermissionState]);
 
 
-
-
-
-
-
-    const setupRecorder = async () => {
+    const setupRecorder = useCallback(async () => {
         try {
             setIsRecorderReady(false);
             const audio = selectedAudioDevice && selectedAudioDevice.length > 0
-                ? { deviceId: selectedAudioDevice }
+                ? { deviceId: { exact: selectedAudioDevice }  }
                 : true;
             const stream = await navigator.mediaDevices.getUserMedia({ audio });
 
@@ -127,18 +121,17 @@ export default function VoiceNote() {
             console.error('Error accessing microphone:', err);
             alert('Microphone access is needed to use this feature.');
         }
-    };
+    }, [selectedAudioDevice]);
 
 
     useEffect(() => {
         setupRecorder()
-    }, [selectedAudioDevice]);
+    }, [selectedAudioDevice, setupRecorder]);
 
     useEffect(() => {
         if (mediaRecorder) {
             const handleDataAvailable = (event: BlobEvent) => {
                 if (event.data.size > 0) {
-                    console.log('Received audio chunk:', event.data.size, 'bytes');
                     audioChunksRef.current.push(event.data);
                 }
             };
@@ -152,7 +145,6 @@ export default function VoiceNote() {
                         return;
                     }
                     const audioBlob = new Blob(audioChunksRef.current, {type: audioChunksRef.current[0].type});
-                    console.log('Created Audio Blob:', audioBlob.size, 'bytes, Type:', audioBlob.type);
                     setAudioBlob(audioBlob); // Ensure this state is set
                     const audioURL = URL.createObjectURL(audioBlob);
                     setAudioURL(audioURL);
@@ -231,10 +223,10 @@ export default function VoiceNote() {
 }
 
     const sendMessage = async () => {
+        setLoading(true);
         try {
             const formData = new FormData();
             if (audioBlob) {
-                console.log('Client-Side Recorded Audio Blob MIME Type:', audioBlob.type);
 
                 // Get the MIME type from the blob
                 const mimeType = audioBlob.type;
@@ -274,7 +266,10 @@ export default function VoiceNote() {
             const result = await response.json();
 
             if (response.ok) {
-                alert('Message sent successfully!');
+                setMessageSentSuccessfully(true);
+                setTimeout(() => {
+                    onClose();
+                }, 2000);
             } else {
                 console.error('Error:', result.error);
                 alert(`Failed to send message: ${result.error}`);
@@ -283,19 +278,33 @@ export default function VoiceNote() {
             console.error('Error:', error);
             alert('An unexpected error occurred.');
         } finally {
-            // setLoading(false);
+            setLoading(false);
         }
     };
 
+    useEffect(() => {
+        if (name && phoneNumber && audioURL) {
+            setSendButtonDisabled(false);
+        } else {
+            setSendButtonDisabled(true);
+        }
+    }, [name, phoneNumber, audioURL]);
+
+    const handleNewMessage = () => {
+        handleDelete();
+        setMessageSentSuccessfully(false);
+    }
 
 
 
-    return isRecorderReady ? (
+
+    return isRecorderReady && !loading && !messageSentSuccessfully ? (
          <div className="h-[70vh] flex flex-col px-6">
-            <div className="h-1/2 flex items-center justify-center">
-                {isRecording && analyserNode && (<div className="h-1/3 w-full flex items-center justify-center px-3">
+                {isRecording && analyserNode && (<div className="h-1/2 flex items-center justify-center">
+                    <div className="h-1/3 w-full flex items-center justify-center px-3">
                     <AudioVisualizer analyserNode={analyserNode} />
-                </div>)}
+                </div>
+                    </div>)}
                 {audioURL && (
                     <div className="h-full w-full flex flex-col items-center justify-center gap-10">
                         <div className="flex flex-col items-center gap-3">
@@ -305,12 +314,14 @@ export default function VoiceNote() {
                             </button>
                         </div>
                         <div className="w-full flex flex-col gap-3">
+                            <Label className="text-input">Who are you?</Label>
                             <Input
                                 className="w-full bg-onyx text-white"
                                 placeholder="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
+                            <Label className="text-input">Where can I text you?</Label>
                             <Input
                                 className="w-full bg-onyx text-white"
                                 placeholder="Phone Number"
@@ -320,9 +331,9 @@ export default function VoiceNote() {
                         </div>
                     </div>
                 )}
-            </div>
-            <div className="h-1/2 flex flex-col items-center text-select-disabled">
-                {!audioURL && (<div className="flex flex-col items-center gap-6">
+                {!audioURL && (
+                    <div className="h-1/2 flex flex-col items-center text-select-disabled mt-auto">
+                    <div className="flex flex-col items-center gap-6">
                     <p className="text-slate-500 text-xs">Press and Hold to Record</p>
                     <NeumorphismButton
                     onMouseDown={handlePressStart}
@@ -334,14 +345,22 @@ export default function VoiceNote() {
                 {availableAudioDevices.length > 0 && (
                     <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
                 )}
-                </div>)}
-                {audioURL && (<Button className="w-full mb-6 py-7" onClick={sendMessage}>
+                </div>
+                    </div>)}
+                {audioURL && (<div className="flex flex-col mt-auto w-full items-center gap-1">
+                    {sendButtonDisabled ? <p className="text-persian">Please enter your name & phone</p> : null} <Button disabled={sendButtonDisabled} className="w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
-                </Button>)}
+                </Button>
+                </div>)}
+        </div>) : messageSentSuccessfully && !loading ? (
+        <div className="h-[70vh] flex items-center justify-center flex-col w-full">
+            <div className="flex flex-col items-center justify-center mt-12 gap-3">
+            <p className="text-wheat text-lg font-bold text-center">Thank You!</p>
+            <p className="text-slate-500 text-center">Your note was sent! I will try to get back within 24h {"<3".toString()}</p>
             </div>
-        </div>) : (
-            <div className="h-[60vh] flex items-center justify-center">
-                <BlinkBlur color="#F5DDB2" size="medium" text="" textColor="" />
-            </div>
-    );
+            <Button className="w-full mb-6 py-7 mt-auto" onClick={handleNewMessage}>Send Another Message</Button>
+        </div>
+    ) : (<div className="h-[70vh] flex items-center justify-center">
+        <BlinkBlur color="#F5DDB2" size="medium" text="" textColor="" />
+    </div>);
 }
