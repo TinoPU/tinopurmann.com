@@ -331,8 +331,10 @@ export default function VoiceNote() {
                     onTouchEnd={handlePressEnd}
                     className={isRecording ? 'recording' : ''}
                 />
-                <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
-                    </div>)}
+                {availableAudioDevices.length > 0 && (
+                    <MicSelect options={availableAudioDevices} currentOption={selectedAudioDevice} setterfunction={setSelectedAudioDevice} />
+                )}
+                </div>)}
                 {audioURL && (<Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" onClick={sendMessage}>
                     Send Note
                 </Button>)}
