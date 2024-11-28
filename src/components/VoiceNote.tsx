@@ -76,7 +76,7 @@ export default function VoiceNote() {
                 }
             };
         }));
-    }, [selectedAudioDevice]);
+    }, [handlePermissionState, selectedAudioDevice]);
 
 
 
@@ -122,7 +122,7 @@ export default function VoiceNote() {
     useEffect(() => {
         // Request microphone access and set up MediaRecorder
         setupRecorder()
-    }, []);
+    }, [setupRecorder]);
 
     useEffect(() => {
         if (mediaRecorder) {
@@ -302,7 +302,7 @@ export default function VoiceNote() {
                     </div>
                 )}
             </div>
-            <div className="h-1/3 flex flex-col items-center select-none">
+            <div className="h-1/3 flex flex-col items-center text-select-disabled">
                 {!audioURL && (<NeumorphismButton
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
