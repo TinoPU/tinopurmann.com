@@ -7,6 +7,7 @@ import {Trash} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {BlinkBlur} from "react-loading-indicators";
+import AudioVisualizer from "@/components/ui/AudioVisualizer";
 
 const Waveform = dynamic(() => import('@/components/ui/WaveForm'), { ssr: false });
 
@@ -30,6 +31,8 @@ export default function VoiceNote() {
     const [microphonePermissionState, setMicrophonePermissionState] = useState<PermissionState | null>(null);
     const [availableAudioDevices, setAvailableAudioDevices] = useState<AudioDevice[]>([]);
     const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(null);
+    const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+    const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
 
     // Get Available Audio Devices
@@ -94,6 +97,20 @@ export default function VoiceNote() {
 
             setMediaStream(stream);
             let mimeType = '';
+
+            // Create an AudioContext
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            setAudioContext(audioCtx);
+
+            // Create an AnalyserNode
+            const analyser = audioCtx.createAnalyser();
+            analyser.smoothingTimeConstant = 0.85; // Adjust for desired smoothness
+            analyser.fftSize = 1024; // Adjust for desired frequency resolution
+            setAnalyserNode(analyser);
+
+            // Connect the stream to the AudioContext
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
 
             if (MediaRecorder.isTypeSupported('audio/mpeg')) {
                 mimeType = 'audio/webm';
@@ -200,6 +217,15 @@ export default function VoiceNote() {
             mediaStream.getTracks().forEach(track => track.stop());
         }
 
+        // Close the AudioContext
+        if (audioContext) {
+            audioContext.close();
+            setAudioContext(null);
+        }
+
+        // Reset the AnalyserNode
+        setAnalyserNode(null);
+
         // Reset the recorder to allow new recordings
         setMediaRecorder(null);
         setMediaStream(null);
@@ -274,8 +300,8 @@ export default function VoiceNote() {
     return isRecorderReady ? (
          <div className="h-[60vh] flex flex-col px-6">
             <div className="h-2/3">
-                {isRecording && (<div className="h-full w-full flex items-center justify-center">
-                    <Waveform />
+                {isRecording && (<div className="h-full w-full flex items-center justify-center px-3">
+                    <AudioVisualizer analyserNode={analyserNode} />
                 </div>)}
                 {audioURL && (
                     <div className="h-full w-full flex flex-col items-center justify-center gap-10">
