@@ -20,6 +20,8 @@ ffmpeg.getAvailableCodecs((err, codecs) => {
     }
 });
 
+console.log('FFmpeg Path:', ffmpegInstaller.path);
+
 import path from 'path';
 
 
