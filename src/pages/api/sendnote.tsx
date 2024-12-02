@@ -6,30 +6,12 @@ import fs from 'fs';
 import FormData from 'form-data';
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
-import {execSync} from "child_process";
-
 
 const ffmpegPath = path.resolve('./bin/ffmpeg');
 const ffprobePath = path.resolve('./bin/ffprobe');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
-
-console.log('Using FFmpeg Path:', ffmpegPath);
-console.log('Using FFprobe Path:', ffprobePath);
-
-console.log(execSync('./bin/ffmpeg -version').toString());
-
-
-ffmpeg.getAvailableCodecs((err, codecs) => {
-    if (err) {
-        console.error('Error fetching codecs:', err);
-    } else {
-        const codecList: string[] = Object.keys(codecs).filter(codec => codecs[codec].type === 'audio');
-        console.log('FFmpeg Available Audio Codecs:', codecList);
-    }
-});
-
 
 
 export const config = {
@@ -71,25 +53,15 @@ export default async function sendWhatsAppMessage(
             return res.status(400).json({ error: 'Missing audio file in request' });
         }
 
-        const getAudioCodec = async (filePath: string): Promise<string> => {
+        const getAudioCodec = async (filePath: string) => {
             return new Promise((resolve, reject) => {
-                ffmpeg(filePath)
-                    .outputOptions('-hide_banner') // Suppress FFmpeg banner
-                    .outputOptions('-f', 'null') // Null output format to prevent actual output
-                    .output('/tmp/null') // Dummy output file
-                    .on('stderr', (stderrLine) => {
-                        // FFmpeg logs metadata to stderr; capture codec info from it
-                        const codecMatch = stderrLine.match(/Audio: (\w+)/);
-                        if (codecMatch) {
-                            resolve(codecMatch[1]); // Extract and resolve the codec
-                        }
-                    })
-                    .on('error', (err) => reject(`Error extracting codec: ${err.message}`))
-                    .on('end', () => reject('No audio stream found or unable to detect codec'))
-                    .run();
+                ffmpeg.ffprobe(filePath, (err, metadata) => {
+                    if (err) return reject(err);
+                    const codec = metadata.streams[0]?.codec_name || 'unknown';
+                    resolve(codec);
+                });
             });
         };
-
 
 
         // Define the destination directory and file path
