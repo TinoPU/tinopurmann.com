@@ -6,14 +6,10 @@ import fs from 'fs';
 import FormData from 'form-data';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
-import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
-ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
-console.log('FFmpeg Path:', ffmpegInstaller.path);
-console.log('FFprobe Path:', ffprobeInstaller.path);
 
 import path from 'path';
 
@@ -57,15 +53,25 @@ export default async function sendWhatsAppMessage(
             return res.status(400).json({ error: 'Missing audio file in request' });
         }
 
-        const getAudioCodec = async (filePath: string) => {
+        const getAudioCodec = async (filePath: string): Promise<string> => {
             return new Promise((resolve, reject) => {
-                ffmpeg.ffprobe(filePath, (err, metadata) => {
-                    if (err) return reject(err);
-                    const codec = metadata.streams[0]?.codec_name || 'unknown';
-                    resolve(codec);
-                });
+                ffmpeg(filePath)
+                    .outputOptions('-hide_banner') // Suppress FFmpeg banner
+                    .outputOptions('-f', 'null') // Null output format to prevent actual output
+                    .output('/tmp/null') // Dummy output file
+                    .on('stderr', (stderrLine) => {
+                        // FFmpeg logs metadata to stderr; capture codec info from it
+                        const codecMatch = stderrLine.match(/Audio: (\w+)/);
+                        if (codecMatch) {
+                            resolve(codecMatch[1]); // Extract and resolve the codec
+                        }
+                    })
+                    .on('error', (err) => reject(`Error extracting codec: ${err.message}`))
+                    .on('end', () => reject('No audio stream found or unable to detect codec'))
+                    .run();
             });
         };
+
 
 
         // Define the destination directory and file path

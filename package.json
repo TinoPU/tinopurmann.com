@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npm install --arch=x64 --platform=linux @ffprobe-installer/ffprobe"
+    "lint": "next lint"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
