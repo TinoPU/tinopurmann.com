@@ -12,6 +12,9 @@ import ffprobeInstaller from '@ffprobe-installer/ffprobe';
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 ffmpeg.setFfprobePath(ffprobeInstaller.path);
 
+console.log('FFmpeg Path:', ffmpegInstaller.path);
+console.log('FFprobe Path:', ffprobeInstaller.path);
+
 import path from 'path';
 
 
