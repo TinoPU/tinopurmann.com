@@ -101,7 +101,7 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
             source.connect(analyser);
 
             if (MediaRecorder.isTypeSupported('audio/mpeg')) {
-                mimeType = 'audio/webm';
+                mimeType = 'audio/mpeg';
             } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
                 mimeType = 'audio/ogg;codecs=opus';
             } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
