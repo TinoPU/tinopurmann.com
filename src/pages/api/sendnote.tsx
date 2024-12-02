@@ -15,10 +15,10 @@ ffmpeg.getAvailableCodecs((err, codecs) => {
     if (err) {
         console.error('Error fetching codecs:', err);
     } else {
-        console.log('FFmpeg Available Codecs:', codecs);
+        const codecList: string[] = Object.keys(codecs).filter(codec => codecs[codec].type === 'audio');
+        console.log('FFmpeg Available Audio Codecs:', codecList);
     }
 });
-
 
 import path from 'path';
 
