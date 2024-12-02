@@ -52,6 +52,17 @@ export default async function sendWhatsAppMessage(
             return res.status(400).json({ error: 'Missing audio file in request' });
         }
 
+        const getAudioCodec = async (filePath: string) => {
+            return new Promise((resolve, reject) => {
+                ffmpeg.ffprobe(filePath, (err, metadata) => {
+                    if (err) return reject(err);
+                    const codec = metadata.streams[0]?.codec_name || 'unknown';
+                    resolve(codec);
+                });
+            });
+        };
+
+
         // Define the destination directory and file path
         const destinationDir = '/tmp';
         const fileExtension = path.extname(audioFile.originalFilename || '.audio');
@@ -71,10 +82,42 @@ export default async function sendWhatsAppMessage(
             // Handle the error appropriately
         }
 
+        try {
+            const codec = await getAudioCodec(destinationPath);
+            console.log(`Input audio codec: ${codec}`);
+        } catch (error) {
+            console.error('Error detecting codec:', error);
+        }
+
         const outputPath = path.join(destinationDir, `${audioFile.newFilename}.mp3`);
+
+        const ffmpegCommand = ffmpeg(destinationPath);
+        const codec = await getAudioCodec(destinationPath);
+
+        if (audioFile.mimetype && audioFile.mimetype.includes('audio/mp4')) {
+            if (codec === 'aac') {
+                ffmpegCommand.inputOptions('-f mp4'); // Safari's typical format
+            } else if (codec === 'opus') {
+                // Opus in MP4 container (Brave) - No need to specify "webm" as it's still MP4
+                ffmpegCommand.inputOptions('-f mp4');
+            }
+        } else if (audioFile.mimetype && audioFile.mimetype.includes('audio/webm')) {
+            if (codec === 'opus') {
+                ffmpegCommand.inputOptions('-f webm'); // Typical for webm
+            }
+        } else {
+            console.warn(`Unrecognized format: ${audioFile.mimetype}`);
+            // You may need to handle other cases or let FFmpeg auto-detect
+        }
+
+
         // Convert to OPUS format
         await new Promise<void>((resolve, reject) => {
-            ffmpeg(destinationPath)
+            ffmpegCommand
+                .outputOptions([
+                    '-af', 'aresample=async=1', // Normalize timestamps
+                    '-ar', '44100',            // Standardize sample rate
+                ])
                 .outputOptions('-c:a libmp3lame') // Use MP3 codec
                 .outputOptions('-q:a 2') // Quality (0 = best, 9 = worst)
                 .save(outputPath)

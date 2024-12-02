@@ -101,7 +101,7 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
             source.connect(analyser);
 
             if (MediaRecorder.isTypeSupported('audio/mpeg')) {
-                mimeType = 'audio/mpeg';
+                mimeType = 'audio/webm';
             } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
                 mimeType = 'audio/ogg;codecs=opus';
             } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
@@ -269,7 +269,7 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
                 setMessageSentSuccessfully(true);
                 setTimeout(() => {
                     onClose();
-                }, 2000);
+                }, 1500);
             } else {
                 console.error('Error:', result.error);
                 alert(`Failed to send message: ${result.error}`);
