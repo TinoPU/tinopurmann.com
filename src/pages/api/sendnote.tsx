@@ -77,17 +77,9 @@ export default async function sendWhatsAppMessage(
 
             // Copy the file to the destination directory
             fs.copyFileSync(audioFile.filepath, destinationPath);
-            console.log('File saved to', destinationPath);
         } catch (err) {
             console.error('Error saving file:', err);
             // Handle the error appropriately
-        }
-
-        try {
-            const codec = await getAudioCodec(destinationPath);
-            console.log(`Input audio codec: ${codec}`);
-        } catch (error) {
-            console.error('Error detecting codec:', error);
         }
 
         const outputPath = path.join(destinationDir, `${audioFile.newFilename}.mp3`);
@@ -111,72 +103,25 @@ export default async function sendWhatsAppMessage(
             // You may need to handle other cases or let FFmpeg auto-detect
         }
 
+        // Convert to OPUS format
+        await new Promise<void>((resolve, reject) => {
+            ffmpegCommand
+                .outputOptions([
+                    '-af', 'aresample=async=1', // Normalize timestamps
+                    '-ar', '44100',            // Standardize sample rate
+                ])
+                .outputOptions('-c:a libmp3lame') // Use MP3 codec
+                .outputOptions('-q:a 2')
+                .save(outputPath)
+                .on('end', () => {
+                    resolve();
+                })
+                .on('error', (err: Error) => {
+                    console.error('FFmpeg Error:', err.message);
+                    reject(err);
+                });
 
-        if (codec === 'aac') {
-            const tempPCMPath = path.join(destinationDir, `${audioFile.newFilename}.wav`);
-            const finalOutputPath = path.join(destinationDir, `${audioFile.newFilename}.mp3`);
-            // Step 1: Convert AAC to PCM
-            await new Promise<void>((resolve, reject) => {
-                ffmpeg(destinationPath)
-                    .outputOptions(['-f wav'])
-                    .on('start', (cmd) => console.log('PCM Conversion Command:', cmd))
-                    .on('end', () => {
-                        console.log('PCM Conversion Complete');
-                        resolve();
-                    })
-                    .on('error', (err) => {
-                        console.error('Error during PCM conversion:', err.message);
-                        reject(err);
-                    })
-                    .save(tempPCMPath);
-            });
-            // Step 2: Convert PCM to MP3
-            await new Promise<void>((resolve, reject) => {
-                ffmpeg(tempPCMPath)
-                    .outputOptions([
-                        '-c:a libmp3lame',
-                        '-q:a 2',
-                        '-ar 44100',
-                    ])
-                    .on('start', (cmd) => console.log('MP3 Conversion Command:', cmd))
-                    .on('end', () => {
-                        console.log('MP3 Conversion Complete');
-                        resolve();
-                    })
-                    .on('error', (err) => {
-                        console.error('Error during MP3 conversion:', err.message);
-                        reject(err);
-                    })
-                    .save(finalOutputPath);
-            });
-                // Step 3: Clean Up Temporary PCM File
-            try {
-                fs.unlinkSync(tempPCMPath);
-                console.log('Temporary PCM file deleted:', tempPCMPath);
-            } catch (err) {
-                console.error('Error deleting temporary PCM file:', err);
-            }
-        } else {
-            // Convert to OPUS format
-            await new Promise<void>((resolve, reject) => {
-                ffmpegCommand
-                    .outputOptions([
-                        '-af', 'aresample=async=1', // Normalize timestamps
-                        '-ar', '44100',            // Standardize sample rate
-                    ])
-                    .outputOptions('-c:a libmp3lame') // Use MP3 codec
-                    .outputOptions('-q:a 2')
-                    .save(outputPath)
-                    .on('end', () => {
-                        resolve();
-                    })
-                    .on('error', (err: Error) => {
-                        console.error('FFmpeg Error:', err.message);
-                        reject(err);
-                    });
-
-            });
-        }
+        });
 
 
 
