@@ -11,6 +11,14 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 
+ffmpeg.getAvailableCodecs((err, codecs) => {
+    if (err) {
+        console.error('Error fetching codecs:', err);
+    } else {
+        console.log('FFmpeg Available Codecs:', codecs);
+    }
+});
+
 
 import path from 'path';
 
