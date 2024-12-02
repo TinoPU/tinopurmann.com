@@ -11,6 +11,7 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 
+
 import path from 'path';
 
 
@@ -125,19 +126,21 @@ export default async function sendWhatsAppMessage(
         // Convert to OPUS format
         await new Promise<void>((resolve, reject) => {
             ffmpegCommand
-                .inputOptions(['-fflags +genpts'])
+                .inputOptions(['-copyts','-fflags +genpts'])
                 .outputOptions([
                     '-af', 'aresample=async=1', // Normalize timestamps
                     '-ar', '44100',            // Standardize sample rate
                 ])
                 .outputOptions('-c:a libmp3lame') // Use MP3 codec
                 .outputOptions('-q:a 2')
-                .outputOptions(['-movflags +faststart', '-strict experimental',])// Quality (0 = best, 9 = worst)
+                .outputOptions(['-start_at_zero','-movflags +faststart', '-strict experimental',])// Quality (0 = best, 9 = worst)
                 .save(outputPath)
                 .on('end', () => {
+                    console.log('Conversion complete');
                     resolve();
                 })
                 .on('error', (err: Error) => {
+                    console.error('FFmpeg Error:', err.message);
                     reject(err);
                 });
 
