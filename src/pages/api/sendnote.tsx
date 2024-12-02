@@ -5,10 +5,20 @@ import axios from 'axios';
 import fs from 'fs';
 import FormData from 'form-data';
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import path from 'path';
+import {execSync} from "child_process";
 
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+const ffmpegPath = path.resolve('./bin/ffmpeg');
+const ffprobePath = path.resolve('./bin/ffprobe');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
+
+console.log('Using FFmpeg Path:', ffmpegPath);
+console.log('Using FFprobe Path:', ffprobePath);
+
+console.log(execSync('./bin/ffmpeg -version').toString());
 
 
 ffmpeg.getAvailableCodecs((err, codecs) => {
@@ -20,9 +30,6 @@ ffmpeg.getAvailableCodecs((err, codecs) => {
     }
 });
 
-console.log('FFmpeg Path:', ffmpegInstaller.path);
-
-import path from 'path';
 
 
 export const config = {
