@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "src/pages/api/sendnote.tsx": {
-      "includeFiles": "node_modules/@ffprobe-installer/**"
-    }
-  }
-}
