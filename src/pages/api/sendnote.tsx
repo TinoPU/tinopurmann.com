@@ -125,12 +125,14 @@ export default async function sendWhatsAppMessage(
         // Convert to OPUS format
         await new Promise<void>((resolve, reject) => {
             ffmpegCommand
+                .inputOptions(['-fflags +genpts'])
                 .outputOptions([
                     '-af', 'aresample=async=1', // Normalize timestamps
                     '-ar', '44100',            // Standardize sample rate
                 ])
                 .outputOptions('-c:a libmp3lame') // Use MP3 codec
-                .outputOptions('-q:a 2') // Quality (0 = best, 9 = worst)
+                .outputOptions('-q:a 2')
+                .outputOptions(['-movflags +faststart', '-strict experimental',])// Quality (0 = best, 9 = worst)
                 .save(outputPath)
                 .on('end', () => {
                     resolve();
