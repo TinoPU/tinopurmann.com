@@ -14,7 +14,7 @@ export default function ToolPage() {
             </div>
             <div className="bg-gradient-to-b from-lime-200 bg-opacity-20 pb-6">
             <div className="flex items-center justify-center px-16 pt-6 pb-3">
-                    <Image className="w-full drop-shadow-2xl" src="/assets/resources/tools.png" alt="Tools" width={80} height={80}/>
+                    <Image className="w-full drop-shadow-2xl" src="/assets/resources/tools.png" alt="Tools" width={80} height={80} unoptimized={true}/>
                 </div>
                 <p className="text-gray-400 px-3 text-sm">
                     Collection of tools I personally use and like. Send me stuff you like!

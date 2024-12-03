@@ -8,7 +8,7 @@ export default function ResourcesGallery() {
             <div className="flex flex-row gap-3 overflow-x-auto w-full pr-6 scrollbar-hidden">
                 <ResourcePreview img_src="/assets/resources/tools.png" name="Tools" link="/resources/tools"/>
                 <ResourcePreview img_src="/assets/resources/places.jpg" name="Places" link="/resources/places"/>
-                <ResourcePreview img_src="/assets/resources/coffee.jpg" name="Newsletters" link=""/>
+                <ResourcePreview img_src="/assets/resources/news.jpg" name="Newsletters" link="/resources/newsletters"/>
                 <ResourcePreview img_src="/assets/resources/tools.png" name="Readings" link=""/>
                 <ResourcePreview img_src="/assets/resources/tools.png" name="Learnings" link=""/>
             </div>
