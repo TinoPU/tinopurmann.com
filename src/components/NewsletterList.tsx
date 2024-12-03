@@ -59,8 +59,8 @@ export default async function NewsletterList() {
         }
         // Extract Rating
         const ratingProperty = properties['Rating'];
-        if (ratingProperty?.type === 'number' && ratingProperty.name) {
-            rating = ratingProperty.name;
+        if (ratingProperty?.type === 'number' && ratingProperty.number) {
+            rating = ratingProperty.number;
         }
 
         // Extract info_scope
