@@ -9,8 +9,7 @@ export default function ResourcesGallery() {
                 <ResourcePreview img_src="/assets/resources/tools.png" name="Tools" link="/resources/tools"/>
                 <ResourcePreview img_src="/assets/resources/places.jpg" name="Places" link="/resources/places"/>
                 <ResourcePreview img_src="/assets/resources/news.jpg" name="Newsletters" link="/resources/newsletters"/>
-                <ResourcePreview img_src="/assets/resources/tools.png" name="Readings" link=""/>
-                <ResourcePreview img_src="/assets/resources/tools.png" name="Learnings" link=""/>
+                <ResourcePreview img_src="/assets/resources/reading.jpg" name="Readings" link="/resources/reading"/>
             </div>
         </div>
     );

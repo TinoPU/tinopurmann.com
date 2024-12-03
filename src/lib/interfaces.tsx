@@ -46,3 +46,14 @@ export interface NewsletterProps {
     frequency: string
     frequencyColor: string
 }
+
+export interface ReadingProps {
+    id: string;
+    name: string;
+    category: string;
+    tags: string[];
+    link: string;
+    description: string;
+    categoryColor: string;
+    tagColors: string[];
+}
