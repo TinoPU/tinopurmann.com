@@ -19,7 +19,7 @@ export default function PlacePage() {
     };
 
     return (
-        <div className="flex flex-col h-[100vh]">
+        <div className="flex flex-col">
             <div className="w-full fixed top-0 left-0 right-0 z-10 text-gray-400 p-3">
                 <BackButton />
             </div>
@@ -37,7 +37,7 @@ export default function PlacePage() {
                 <Place image_src="/assets/resources/bar.svg" alt_text="Bars" title="Bars" link="https://maps.app.goo.gl/HH7QRS1WaEcYeSa98"/>
                 <Place image_src="/assets/resources/kite.svg" alt_text="Kite Spots" title="Kite Spots" link="https://maps.app.goo.gl/GWWKNJaAbSgQ2Tus8"/>
             </div>
-            <div className=" w-full flex justify-center items-center my-auto">
+            <div className=" w-full flex justify-center items-center mt-12">
             <Button className="py-7 w-2/3" onClick={handleButtonClick}>Recommend a place</Button>
             </div>
         </div>
