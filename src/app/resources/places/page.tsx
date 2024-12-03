@@ -38,7 +38,7 @@ export default function PlacePage() {
                 <Place image_src="/assets/resources/kite.svg" alt_text="Kite Spots" title="Kite Spots" link="https://maps.app.goo.gl/GWWKNJaAbSgQ2Tus8"/>
             </div>
             <div className=" w-full flex justify-center items-center mt-12">
-            <Button className="py-7 w-2/3" onClick={handleButtonClick}>Recommend a place</Button>
+            <Button className="py-7 w-2/3 mb-6" onClick={handleButtonClick}>Recommend a place</Button>
             </div>
         </div>
     )
