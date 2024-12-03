@@ -1,4 +1,4 @@
-import type {ToolProps} from "@/lib/interfaces";
+import type {NewsletterProps} from "@/lib/interfaces";
 import Tag from "@/components/ui/tag";
 import {notionColorConversion} from "@/lib/utils";
 import tinycolor from 'tinycolor2';
@@ -9,12 +9,12 @@ import InformationCircleIcon from "@/components/icons/info";
 
 
 
-export default function Tool({tool}: {tool: ToolProps}) {
+export default function Newsletter({newsletter}: {newsletter: NewsletterProps}) {
 
-    const categoryHandle = tool.category.slice(0,2)
-    const categoryColors = notionColorConversion(tool.categoryColor)
-    const tagColors = (tool.tagColors?.map((color) => notionColorConversion(color)))
-    const userColors = (tool.userColors?.map((color) => notionColorConversion(color)))
+    const categoryHandle = newsletter.category.slice(0,2)
+    const categoryColors = notionColorConversion(newsletter.categoryColor)
+    const tagColors = (newsletter.tagColors?.map((color) => notionColorConversion(color)))
+    const frequencyColors = notionColorConversion(newsletter.frequencyColor)
     const tinyCol = tinycolor(categoryColors?.background)
     const bg_color = tinyCol.saturate(40).brighten(15).toString()
 
@@ -33,9 +33,9 @@ export default function Tool({tool}: {tool: ToolProps}) {
                 <Sheet>
                     <SheetTrigger className="w-full flex-row flex">
                         <div className="items-start flex flex-col flex-grow">
-                            <div className="font-bold text-sm text-white">{tool.name}</div>
+                            <div className="font-bold text-sm text-white">{newsletter.name}</div>
                             <div className="flex flex-row gap-1 flex-wrap">
-                                {tool.tags.slice(0, 3).map((tag, index) => (
+                                {newsletter.tags.slice(0, 3).map((tag, index) => (
                                     <Tag key={index} tagName={tag} bgColor={tagColors[index]?.background ?? "#191919"}
                                          textColor={tagColors[index]?.text ?? "#D4D4D4"} widthLimit={96}/>)
                                 )}
@@ -47,31 +47,29 @@ export default function Tool({tool}: {tool: ToolProps}) {
                     </SheetTrigger>
                     <SheetContent side="bottom">
                         <SheetHeader>
-                            <SheetTitle className="text-wheat gap-2 flex flex-row">{tool.name}
+                            <SheetTitle className="text-wheat gap-2 flex flex-row">{newsletter.name}
                                 <div className="flex flex-row gap-1 flex-wrap self-end">
-                                    {tool.user.map((user, index) => (
-                                        <Tag key={index} tagName={user}
-                                             bgColor={userColors[index]?.background ?? "#191919"}
-                                             textColor={userColors[index]?.text ?? "#D4D4D4"}/>)
-                                    )}
+                                        <Tag tagName={newsletter.frequency}
+                                             bgColor={frequencyColors?.background ?? "#191919"}
+                                             textColor={frequencyColors?.text ?? "#D4D4D4"}/>
                                 </div>
                             </SheetTitle>
                             <SheetDescription>
-                                {tool.description}
+                                {newsletter.notes}
                             </SheetDescription>
                                 <div className="text-lg text-white py-2">Category</div>
-                                <Tag tagName={tool.category} bgColor={categoryColors?.background ?? "#191919"}
+                                <Tag tagName={newsletter.category} bgColor={categoryColors?.background ?? "#191919"}
                                      textColor={categoryColors?.text ?? "#D4D4D4"}/>
                                 <div className="text-lg text-white py-2">Tags</div>
                                 <div className="flex flex-row gap-1 flex-wrap pb-3">
-                                    {tool.tags.map((tag, index) => (
+                                    {newsletter.tags.map((tag, index) => (
                                         <Tag key={index} tagName={tag}
                                              bgColor={tagColors[index]?.background ?? "#191919"}
                                              textColor={tagColors[index]?.text ?? "#D4D4D4"}/>)
                                     )}
                                 </div>
                                 <Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" asChild>
-                                    <Link href={tool.link}>Open Website</Link>
+                                    <Link href={newsletter.link}>Signup</Link>
                                 </Button>
                         </SheetHeader>
                     </SheetContent>

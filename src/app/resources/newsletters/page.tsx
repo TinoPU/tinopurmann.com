@@ -1,5 +1,6 @@
 import Image from "next/image";
 import BackButton from "@/components/BackButton";
+import NewsletterList from "@/components/NewsletterList";
 
 
 
@@ -19,6 +20,7 @@ export default function NewsletterPage() {
                     Newsletters I subscribed to at some point. Send me your favorites!
                 </p>
             </div>
+            <NewsletterList />
         </div>
     )
 }

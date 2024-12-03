@@ -30,3 +30,19 @@ export interface AudioDevice {
     id: string;
     name: string;
 }
+
+export interface NewsletterProps {
+    id: string;
+    name: string;
+    category: string;
+    tags: string[];
+    link: string;
+    info_scope: string;
+    info_scopeColor: string;
+    categoryColor: string;
+    tagColors: string[];
+    rating: number;
+    notes: string;
+    frequency: string
+    frequencyColor: string
+}
