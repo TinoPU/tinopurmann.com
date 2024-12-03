@@ -11,7 +11,7 @@ export default function ContactGrid() {
                 <div className="flex flex-col gap-3">
                     <VoiceRecorder/>
                     <QuickAccess image_src="/assets/contact/mail.svg" alt_text="Please don't email me"
-                                 link="mailto:tinopurmann@gmail.com"/>
+                                 link="mailto:tinopurmann@gmail.com?subject=Message%20from%20Tinopurmann.com"/>
                 </div>
                 <div className="flex flex-col gap-3">
                     <QuickAccess image_src="/assets/contact/post.png" alt_text="Send me a Postcard"
