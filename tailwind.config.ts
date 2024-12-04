@@ -55,6 +55,7 @@ export default {
 			persian: "#EA8C55",
 			night: "#131313",
 			onyx: "#303336",
+			onyxLight: "#4c5055",
 			wheat: "#F5DDB2",
   		},
   		borderRadius: {

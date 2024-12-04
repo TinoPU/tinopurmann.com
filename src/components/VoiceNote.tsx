@@ -299,7 +299,7 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
 
 
     return isRecorderReady && !loading && !messageSentSuccessfully ? (
-         <div className="h-[70vh] flex flex-col px-6">
+         <div className="h-[70vh] flex flex-col px-6 md:w-[60%]">
                 {isRecording && analyserNode && (<div className="h-1/2 flex items-center justify-center">
                     <div className="h-1/3 w-full flex items-center justify-center px-3">
                     <AudioVisualizer analyserNode={analyserNode} />

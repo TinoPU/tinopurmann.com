@@ -108,7 +108,7 @@ export default function GoogleMapView(location: MapProps) {
 
 
     return (
-            <div className="h-48 pb-6" style={{ marginTop: '20px' }}>
+            <div className="h-48 pb-6 md:h-60" style={{ marginTop: '20px' }}>
                 <LoadScript googleMapsApiKey={googleMapsApiKey} id="google-map-script">
                     <GoogleMap
                         mapContainerStyle={mapContainerStyle}

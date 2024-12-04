@@ -24,7 +24,9 @@ export default function VoiceRecorder() {
                     <SheetTitle className="text-wheat gap-2 flex flex-row">
                        Tell me Something
                     </SheetTitle>
-                    <VoiceNote onClose={Close}/>
+                    <div className="w-full flex justify-center">
+                        <VoiceNote onClose={Close}/>
+                    </div>
                 </SheetHeader>
             </SheetContent>
         </Sheet>

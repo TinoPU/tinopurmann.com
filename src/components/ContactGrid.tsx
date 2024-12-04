@@ -7,13 +7,13 @@ export default function ContactGrid() {
     return (
         <div className="flex flex-col gap-3">
             <div className="text-white text-2xl font-bold">Contact</div>
-            <div className="grid grid-cols-2 gap-3 pr-6">
-                <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-3 pr-6 md:flex md:flex-row">
+                <div className="flex flex-col gap-3 md:flex-row">
                     <VoiceRecorder/>
                     <QuickAccess image_src="/assets/contact/mail.svg" alt_text="Please don't email me"
                                  link="mailto:tinopurmann@gmail.com?subject=Message%20from%20Tinopurmann.com"/>
                 </div>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 md:flex-row">
                     <QuickAccess image_src="/assets/contact/post.png" alt_text="Send me a Postcard"
                                  link="https://www.post.ch/en/sending-letters/sending-letters/postcard-creator-app#app-herunterladen"/>
                     <QuickAccess image_src="/assets/contact/calendly.svg" alt_text="Calendly"
