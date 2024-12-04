@@ -1,6 +1,9 @@
 import "./globals.css";
 import type { Metadata } from 'next'
 import { Montserrat } from "next/font/google"
+import SwipeProvider from "@/components/SwipeProvider/SwipeProvider";
+import {Suspense} from "react";
+import Loading from "@/app/loading";
 
 
 export const metadata: Metadata = {
@@ -23,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} font-sans`}>
-        {children}
+      <SwipeProvider>
+          <Suspense fallback={<Loading />}>
+          {children}
+          </Suspense>
+      </SwipeProvider>
       </body>
     </html>
   );

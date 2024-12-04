@@ -51,7 +51,12 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			persian: "#EA8C55",
+			night: "#131313",
+			onyx: "#303336",
+			onyxLight: "#4c5055",
+			wheat: "#F5DDB2",
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
