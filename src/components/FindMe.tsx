@@ -2,9 +2,51 @@ import QuickAccess from "@/components/ui/quickaccess";
 import React from "react";
 import GoogleMapView from "@/components/GoogleMapView";
 import {MapProps} from "@/lib/interfaces";
+import {Client, isFullPage} from "@notionhq/client";
 
 
-export default function FindMe({location} : {location: MapProps}) {
+export default async function FindMe() {
+
+    const notion = new Client({ auth: process.env.NOTION_TOKEN });
+    const locationDBId = '14426a260614809d9c57e0ade3e5a5e6';
+
+    const location_response = await notion.databases.query({
+        database_id: locationDBId,
+        filter: {
+            or: [
+                {
+                    property: 'Name',
+                    rich_text: {
+                        is_not_empty: true,
+                    },
+                }
+            ],
+        },
+        sorts: [
+            {
+                property: 'Created time',
+                direction: 'descending',
+            },
+        ],
+    });
+
+
+
+    const location_pages = location_response.results.filter(isFullPage);
+
+    const defaultLocation: MapProps = { lat: 45.578515, lng: -61.233523 };
+
+
+    const latestLocation: MapProps | null = location_pages.length > 0 ? (() => {
+        const nameProperty = location_pages[0].properties['Name'];
+        if (nameProperty?.type === 'title' && nameProperty.title.length > 0) {
+            const [lat, lng] = nameProperty.title[0].plain_text.split(',').map(parseFloat);
+            return { lat, lng };
+        }
+        return defaultLocation
+    })() : defaultLocation;
+
+    const location = latestLocation;
 
     return (
         <div>
