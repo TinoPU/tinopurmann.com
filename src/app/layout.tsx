@@ -9,7 +9,6 @@ import Loading from "@/app/loading";
 export const metadata: Metadata = {
     title: 'Tino Purmann',
     description: 'Collection of my projects and thoughts',
-    openGraph: {images: [{url: 'https://tinopurmann.com/assets/TPpreview.png'}]},
 }
 
 const montserrat = Montserrat({
