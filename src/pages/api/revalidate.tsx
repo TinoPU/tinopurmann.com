@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
-export async function GET(request: NextRequest) {
+export default async function GET(request: NextRequest) {
     // Extract the 'page' parameter from the query string
     const { searchParams } = request.nextUrl;
     const page = searchParams.get('page');
