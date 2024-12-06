@@ -1,3 +1,5 @@
+export const revalidate: number = 86400;
+
 import QuickAccess from "@/components/ui/quickaccess";
 import React from "react";
 import GoogleMapView from "@/components/GoogleMapView";
@@ -33,6 +35,7 @@ export default async function FindMe() {
 
 
     const location_pages = location_response.results.filter(isFullPage);
+    console.log(location_pages);
 
     const defaultLocation: MapProps = { lat: 45.578515, lng: -61.233523 };
 
@@ -45,6 +48,8 @@ export default async function FindMe() {
         }
         return defaultLocation
     })() : defaultLocation;
+
+    console.log(latestLocation);
 
     const location = latestLocation;
 
