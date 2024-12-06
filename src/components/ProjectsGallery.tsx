@@ -67,6 +67,8 @@ export default async function ProjectsGallery() {
             description,
         };
     });
+
+    console.log(projects);
     
     return (
         <div className="justify-start gap-3 flex flex-col no-swipe">
