@@ -63,7 +63,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
                                     )}
                                 </div>
                                 <Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" asChild>
-                                    <Link href={reading.link}>Signup</Link>
+                                    <Link href={reading.link}>Read more</Link>
                                 </Button>
                         </SheetHeader>
                     </SheetContent>
