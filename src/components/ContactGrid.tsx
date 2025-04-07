@@ -17,7 +17,7 @@ export default function ContactGrid() {
                     <QuickAccess image_src="/assets/contact/post.png" alt_text="Send me a Postcard"
                                  link="https://www.post.ch/en/sending-letters/sending-letters/postcard-creator-app#app-herunterladen"/>
                     <QuickAccess image_src="/assets/contact/calendly.svg" alt_text="Calendly"
-                                 link="https://calendly.com/tino-p1q/30min"/>
+                                 link="https://calendly.com/tinop/30min"/>
                 </div>
             </div>
         </div>
