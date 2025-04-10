@@ -35,7 +35,6 @@ export default async function FindMe() {
 
 
     const location_pages = location_response.results.filter(isFullPage);
-    console.log(location_pages);
 
     const defaultLocation: MapProps = { lat: 45.578515, lng: -61.233523 };
 

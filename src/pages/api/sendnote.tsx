@@ -173,6 +173,8 @@ export default async function sendWhatsAppMessage(
                 maxBodyLength: Infinity,
             });
 
+            console.log(mediaResponse.data)
+
             const mediaId = mediaResponse.data.id;
 
             // Send audio message with media ID
