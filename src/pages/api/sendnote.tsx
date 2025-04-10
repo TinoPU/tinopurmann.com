@@ -190,12 +190,17 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            await axios.post(messageUrl, audioMessageData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            try {
+                const audioResponse = await axios.post(messageUrl, audioMessageData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('✅ Audio message response:', audioResponse.data);
+            } catch (error) {
+                console.error('❌ Error sending audio message:', error);
+            }
 
             // Send name as text message
             const nameMessageData = {
@@ -207,14 +212,17 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            await axios.post(messageUrl, nameMessageData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-
+            try {
+                const nameResponse = await axios.post(messageUrl, nameMessageData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('✅ Name message response:', nameResponse.data);
+            } catch (error) {
+                console.error('❌ Error sending name message:', error || error);
+            }
 
             // Send phone number as text message
             const phoneMessageData = {
@@ -226,12 +234,36 @@ export default async function sendWhatsAppMessage(
                 },
             };
 
-            await axios.post(messageUrl, phoneMessageData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            try {
+                const phoneResponse = await axios.post(messageUrl, phoneMessageData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('✅ Phone message response:', phoneResponse.data);
+            } catch (error: unknown) {
+
+                if (axios.isAxiosError(error)) {
+                    console.error('Error sending phone:', error.response?.data || error.message);
+                    return res.status(500).json({
+                        error: 'Failed to send messages',
+                        details: error.response?.data || error.message,
+                    });
+                } else if (error instanceof Error) {
+                    console.error('Error sending messages:', error.message);
+                    return res.status(500).json({
+                        error: 'Failed to send messages',
+                        details: error.message,
+                    });
+                } else {
+                    console.error('Unexpected error:', error);
+                    return res.status(500).json({
+                        error: 'Failed to send messages',
+                        details: 'An unexpected error occurred',
+                    });
+                }
+            }
 
 
             return res.status(200).json({ message: 'Messages sent successfully' });
