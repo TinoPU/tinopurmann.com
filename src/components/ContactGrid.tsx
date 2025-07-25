@@ -39,7 +39,7 @@ export default function ContactGrid({setIsOpen, isOpen}: ContactGridProps) {
                     <QuickAccess image_src="/assets/contact/calendly.svg" alt_text="Calendly"
                                  link="https://calendly.com/tinop/30min"/>
                 </div>
-                <div className="hidden md:gap-4 md:flex md:flex-col">
+                <div className="hidden md:gap-2 md:flex md:flex-col">
                         <QuickAccess image_src="/assets/contact/linkedin.svg" alt_text="Linkedin"
                                      link="https://www.linkedin.com/in/tinopurmann"/>
                         <QuickAccess image_src="/assets/contact/spotify.svg" alt_text="Spotify"
