@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import containerQueries from '@tailwindcss/container-queries'
 
 
 export default {
@@ -54,9 +55,14 @@ export default {
   			},
 			persian: "#EA8C55",
 			night: "#131313",
-			onyx: "#303336",
-			onyxLight: "#4c5055",
+			onyx: "#121212",
+			onyxLight: "#1F1F1F",
 			wheat: "#F5DDB2",
+			mobileBG: "#121212",
+			mobileOnyx: "#2A2A2A",
+			mobileWhite:"#FCFCFC",
+			onyxHover:"#333333",
+			textLight:"#9A9A9A"
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -65,8 +71,15 @@ export default {
   		},
 		fontFamily: {
 			sans: ['var(--font-montserrat)']
+		},
+		container: {
+			  screens: {
+				  col: "50px"
+			  }
 		}
   	}
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+	  containerQueries,tailwindcssAnimate],
+
 } satisfies Config;

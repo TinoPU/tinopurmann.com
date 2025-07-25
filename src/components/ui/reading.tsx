@@ -19,7 +19,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
 
     return (
         <div className="flex flex-row items-center w-full gap-3">
-            <div className="flex justify-center text-md font-bold items-center rounded-sm text-wheat"
+            <div className="flex justify-center text-md font-bold items-center rounded-sm text-primary"
              style={{
                 height: "50px",
                 width: "50px",
@@ -32,7 +32,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
                 <Sheet>
                     <SheetTrigger className="w-full flex-row flex">
                         <div className="items-start flex flex-col flex-grow">
-                            <div className="font-bold text-sm text-white">{reading.name}</div>
+                            <div className="font-bold text-sm text-mobileWhite md:text-white">{reading.name}</div>
                             <div className="flex flex-row gap-1 flex-wrap">
                                 {reading.tags.slice(0, 3).map((tag, index) => (
                                     <Tag key={index} tagName={tag} bgColor={tagColors[index]?.background ?? "#191919"}
@@ -46,7 +46,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
                     </SheetTrigger>
                     <SheetContent side="bottom">
                         <SheetHeader>
-                            <SheetTitle className="text-wheat gap-2 flex flex-row">{reading.name}
+                            <SheetTitle className="text-primary gap-2 flex flex-row">{reading.name}
                             </SheetTitle>
                             <SheetDescription>
                                 {reading.description}
@@ -54,7 +54,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
                                 <div className="text-lg text-white py-2">Category</div>
                                 <Tag tagName={reading.category} bgColor={categoryColors?.background ?? "#191919"}
                                      textColor={categoryColors?.text ?? "#D4D4D4"}/>
-                                <div className="text-lg text-white py-2">Tags</div>
+                                <div className="text-lg text-mobileWhite md:text-white py-2">Tags</div>
                                 <div className="flex flex-row gap-1 flex-wrap pb-3">
                                     {reading.tags.map((tag, index) => (
                                         <Tag key={index} tagName={tag}
@@ -62,7 +62,7 @@ export default function Reading({reading}: {reading: ReadingProps}) {
                                              textColor={tagColors[index]?.text ?? "#D4D4D4"}/>)
                                     )}
                                 </div>
-                                <Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" asChild>
+                                <Button className="bg-primary text-onyx font-bold w-full mb-6 py-7" asChild>
                                     <Link href={reading.link}>Read more</Link>
                                 </Button>
                         </SheetHeader>

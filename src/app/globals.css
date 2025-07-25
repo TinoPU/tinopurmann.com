@@ -46,13 +46,13 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 141.15 72.9% 41.96%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -115,11 +115,33 @@ body {
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
   }
-
   .scrollbar-hidden {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
   }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar::-webkit-scrollbar {
+    width: 0;
+  }
+  .scrollbar:hover::-webkit-scrollbar {
+    width: 8px;
+    height: 14px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: #4a4a4a;
+    border-radius: 7px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #5c5c5c;
+  }
+
+  .container {
+    container-type: inline-size;
+  }
+
 
   .text-select-disabled {
     -webkit-touch-callout:none;
