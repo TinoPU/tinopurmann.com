@@ -5,7 +5,7 @@ import {useState} from "react";
 import ContactGrid from "@/components/ContactGrid";
 
 export default function ContactGridWrapper() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     return (
         <div className={`w-full transition-all duration-300 ${isOpen ? "md:w-1/12" : "md:w-2/12"}`}>
