@@ -22,7 +22,7 @@ export default function VoiceRecorder() {
                     <QuickAccess image_src="/assets/contact/microphone.svg" alt_text="Leave a note" link=""/>
                 </div>
                 <div className="hidden md:block">
-                    <Image className="w-14 transition-transform duration-300 hover:scale-110 hover:brightness-125" src={"/assets/spotifyMic.png"} alt="Mic Icon" width={8} height={8} unoptimized={true}/>
+                    <Image className="w-12 transition-transform duration-300 hover:scale-110 hover:brightness-125" src={"/assets/spotifyMic.png"} alt="Mic Icon" width={8} height={8} unoptimized={true}/>
                 </div>
             </SheetTrigger>
             <SheetContent side="bottom">

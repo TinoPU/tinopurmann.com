@@ -11,10 +11,10 @@ type ContactGridProps = {
 
 export default function ContactGrid({setIsOpen, isOpen}: ContactGridProps) {
     return (
-        <div className="flex flex-col gap-3 rounded-sm md:bg-onyx md:rounded md:p-4 md:min-h-screen md:h-full">
-            <div className="grid grid-cols-2 gap-3 pr-6 md:pr-0 md:flex md:flex-col">
-                <div className="flex flex-col gap-3 md:flex md:flex-col md:w-full">
-                    <div className="md:hidden"><VoiceRecorder/></div>
+        <div className="flex flex-col gap-2 rounded-sm md:bg-onyx md:rounded md:p-4 md:min-h-screen md:h-full">
+            <div className="grid grid-cols-2 gap-2 pr-6 md:pr-0 md:flex md:flex-col">
+                <div className="flex flex-col gap-2 md:w-full">
+                    <div className="flex md:hidden"><VoiceRecorder/></div>
                     <div className="hidden md:flex flex-row items-center gap-2">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -33,13 +33,13 @@ export default function ContactGrid({setIsOpen, isOpen}: ContactGridProps) {
                     <QuickAccess image_src="/assets/contact/mail.svg" alt_text="Email"
                                  link="mailto:tinopurmann@gmail.com?subject=Message%20from%20Tinopurmann.com"/>
                 </div>
-                <div className="flex flex-col gap-3 md:flex md:flex-col">
+                <div className="flex flex-col gap-2">
                     <QuickAccess image_src="/assets/contact/post.png" alt_text="Postcard"
                                  link="https://www.post.ch/en/sending-letters/sending-letters/postcard-creator-app#app-herunterladen"/>
                     <QuickAccess image_src="/assets/contact/calendly.svg" alt_text="Calendly"
                                  link="https://calendly.com/tinop/30min"/>
                 </div>
-                <div className="hidden md:gap-3 md:flex md:flex-col">
+                <div className="hidden md:gap-4 md:flex md:flex-col">
                         <QuickAccess image_src="/assets/contact/linkedin.svg" alt_text="Linkedin"
                                      link="https://www.linkedin.com/in/tinopurmann"/>
                         <QuickAccess image_src="/assets/contact/spotify.svg" alt_text="Spotify"
