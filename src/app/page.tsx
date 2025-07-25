@@ -1,4 +1,3 @@
-import ContactGrid from "@/components/ContactGrid";
 // import ProjectsGallery from "@/components/ProjectsGallery";
 import ResourcesGallery from "@/components/ResourcesGallery";
 import FindMe from "@/components/FindMe";

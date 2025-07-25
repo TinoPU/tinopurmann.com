@@ -22,7 +22,7 @@ export default function QuickAccess({ image_src, alt_text, link }: QuickAccessPr
         if (!containerRef.current) return;
 
         const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
+            for (const entry of entries) {
                 const width = entry.contentRect.width;
                 // Hide text if container width less than 120px (adjust as needed)
                 setShowText(width >= 120);
