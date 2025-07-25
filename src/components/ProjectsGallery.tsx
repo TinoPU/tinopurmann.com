@@ -84,14 +84,15 @@ export default async function ProjectsGallery() {
                 ))}
             </div>
         </div>
-            <div className="hidden md:flex md:flex-col md:gap-4">
+            <div className="hidden md:flex md:flex-col">
                 {projects.map((project: Project) => (
                     <ExpandedPreview
                         key={project.id}
                         img_src={project.imageUrl}
                         name={project.title}
                         description={project.description}
-                        link=""
+                        link="/cv"
+                        footernote=""
                     />
                 ))}
             </div>

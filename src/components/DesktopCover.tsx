@@ -38,11 +38,18 @@ export default function DesktopCover() {
                         <Button variant="tab" size="tab">Projects</Button>
                         <Button variant="tab" size="tab">Resources</Button>
                     </div>
-                    <div>
-                        <ExpandedPreview img_src="/assets/resources/tools.png" name="Tools I use" link="/resources/tools" description="This is a sample description"></ExpandedPreview>
-                        <ExpandedPreview img_src="/assets/resources/tools.png" name="Tools I use" link="/resources/tools" description="This is a sample description"></ExpandedPreview>
-                        <ExpandedPreview img_src="/assets/resources/tools.png" name="Tools I use" link="/resources/tools" description="This is a sample description"></ExpandedPreview>
-                        <ExpandedPreview img_src="/assets/resources/tools.png" name="Tools I use" link="/resources/tools" description="This is a sample description"></ExpandedPreview>
+                    <div className="-mb-4">
+                        <ExpandedPreview img_src="/assets/resources/tools.png" name="Tools I use" link="/resources/tools"
+                                         description="Collection of tools I personally use and like. Send me stuff you like!" footernote="62 Tools"></ExpandedPreview>
+
+                        <ExpandedPreview img_src="/assets/resources/places.jpg" name="Favorite places" link="/resources/places"
+                                         description="My favorite cafés, bars, restaurants and more across the world" footernote="200+ Places"></ExpandedPreview>
+
+                        <ExpandedPreview img_src="/assets/resources/news.jpg" name="Newsletter top picks" link="/resources/newsletters"
+                                         description="Newsletters I subscribed to at some point. Send me your favorites!" footernote="14 Newsletters"></ExpandedPreview>
+
+                        <ExpandedPreview img_src="/assets/resources/reading.jpg" name="Tools I use" link="/resources/reading"
+                                         description="Current reading list. I need suggestions." footernote="6 items"></ExpandedPreview>
                     </div>
                     <ProjectsGallery />
                 </div>

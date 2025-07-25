@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 
-export default function ExpandedPreview({img_src, name, link, description }: {img_src: string, name: string, link: string, description: string}) {
+export default function ExpandedPreview({img_src, name, link, description, footernote }: {img_src: string, name: string, link: string, description: string, footernote: string}) {
     return (
         <div className="flex-shrink-0 md:hover:bg-onyxLight rounded-sm p-1.5">
             <a href={link}>
@@ -10,7 +10,7 @@ export default function ExpandedPreview({img_src, name, link, description }: {im
                     <div className="flex flex-col justify-between">
                         <h1 className="text-white text-md font-medium">{name}</h1>
                         <p className="text-textLight text-sm">{description}</p>
-                        <p className="text-white text-xs font-medium">86 tools</p>
+                        <p className="text-white text-xs font-medium">{footernote}</p>
                     </div>
                 </div>
             </a>

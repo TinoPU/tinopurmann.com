@@ -19,7 +19,7 @@ export default function VoiceRecorder() {
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger className="w-full">
                 <div className="md:hidden">
-                    <QuickAccess image_src="/assets/contact/microphone.svg" alt_text="Leave a note"/>
+                    <QuickAccess image_src="/assets/contact/microphone.svg" alt_text="Leave a note" link=""/>
                 </div>
                 <div className="hidden md:block">
                     <Image className="w-14 transition-transform duration-300 hover:scale-110 hover:brightness-125" src={"/assets/spotifyMic.png"} alt="Mic Icon" width={8} height={8} unoptimized={true}/>
@@ -28,7 +28,7 @@ export default function VoiceRecorder() {
             <SheetContent side="bottom">
                 <SheetHeader>
                     <SheetTitle className="text-primary gap-2 flex flex-row">
-                       Tell me Something
+                       Send me a note
                     </SheetTitle>
                     <div className="w-full flex justify-center">
                         <VoiceNote onClose={Close}/>

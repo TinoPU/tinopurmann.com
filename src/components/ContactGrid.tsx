@@ -12,20 +12,23 @@ type ContactGridProps = {
 export default function ContactGrid({setIsOpen, isOpen}: ContactGridProps) {
     return (
         <div className="flex flex-col gap-3 rounded-sm md:bg-onyx md:rounded md:p-4 md:min-h-screen md:h-full">
-            <div className="text-mobileWhite md:text-white text-xl font-bold">Talk to me</div>
             <div className="grid grid-cols-2 gap-3 pr-6 md:pr-0 md:flex md:flex-col">
                 <div className="flex flex-col gap-3 md:flex md:flex-col md:w-full">
                     <div className="md:hidden"><VoiceRecorder/></div>
-                    <div className="hidden md:block">
+                    <div className="hidden md:flex flex-row items-center gap-2">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="p-2 hover:opacity-80 transition"
+                            className={`p-2 hover:opacity-80 transition ${isOpen ? "rotate-0" : "rotate-180"}`}
                         >
                             <IconLibraryToggle
                                 color="#b3b3b3"
                                 size={28}
                             />
                         </button>
+                        <div
+                            className={`text-mobileWhite md:text-white text-sm font-bold transition duration-300 ease-in-out ${isOpen ? "md:hidden" : ""}`}>Reach
+                            me
+                        </div>
                     </div>
                     <QuickAccess image_src="/assets/contact/mail.svg" alt_text="Email"
                                  link="mailto:tinopurmann@gmail.com?subject=Message%20from%20Tinopurmann.com"/>
