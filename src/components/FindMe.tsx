@@ -53,12 +53,12 @@ export default async function FindMe() {
     const location = latestLocation;
 
     return (
-        <div>
-            <div className="text-white text-2xl font-bold">Find me</div>
-            <div className="pr-6 rounded-sm">
+        <div className="md:bg-onyx md:rounded md:p-4 md:min-h-screen">
+            <div className="text-mobileWhite md:text-white text-xl font-bold">Find me</div>
+            <div className="pr-6 rounded-sm md:pr-0 md:rounded">
                 <GoogleMapView lat={location.lat} lng={location.lng}/>
             </div>
-            <div className="grid grid-cols-2 gap-3 pr-6 md:flex md:flex-row">
+            <div className="grid grid-cols-2 gap-3 pr-6 md:hidden">
                 <div className="flex flex-col gap-3 md:flex-row">
                     <QuickAccess image_src="/assets/contact/linkedin.svg" alt_text="Linkedin"
                                  link="https://www.linkedin.com/in/tinopurmann"/>

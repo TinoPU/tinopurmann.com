@@ -20,7 +20,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
 
     return (
         <div className="flex flex-row items-center w-full gap-3">
-            <div className="flex justify-center text-md font-bold items-center rounded-sm text-wheat"
+            <div className="flex justify-center text-md font-bold items-center rounded-sm text-primary"
              style={{
                 height: "50px",
                 width: "50px",
@@ -33,7 +33,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                 <Sheet>
                     <SheetTrigger className="w-full flex-row flex">
                         <div className="items-start flex flex-col flex-grow">
-                            <div className="font-bold text-sm text-white">{tool.name}</div>
+                            <div className="font-bold text-sm text-mobileWhite md:text-white">{tool.name}</div>
                             <div className="flex flex-row gap-1 flex-wrap">
                                 {tool.tags.slice(0, 3).map((tag, index) => (
                                     <Tag key={index} tagName={tag} bgColor={tagColors[index]?.background ?? "#191919"}
@@ -47,7 +47,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                     </SheetTrigger>
                     <SheetContent side="bottom">
                         <SheetHeader>
-                            <SheetTitle className="text-wheat gap-2 flex flex-row">{tool.name}
+                            <SheetTitle className="text-primary gap-2 flex flex-row">{tool.name}
                                 <div className="flex flex-row gap-1 flex-wrap self-end">
                                     {tool.user.map((user, index) => (
                                         <Tag key={index} tagName={user}
@@ -62,7 +62,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                                 <div className="text-lg text-white py-2">Category</div>
                                 <Tag tagName={tool.category} bgColor={categoryColors?.background ?? "#191919"}
                                      textColor={categoryColors?.text ?? "#D4D4D4"}/>
-                                <div className="text-lg text-white py-2">Tags</div>
+                                <div className="text-lg text-mobileWhite md:text-white py-2">Tags</div>
                                 <div className="flex flex-row gap-1 flex-wrap pb-3">
                                     {tool.tags.map((tag, index) => (
                                         <Tag key={index} tagName={tag}
@@ -70,7 +70,7 @@ export default function Tool({tool}: {tool: ToolProps}) {
                                              textColor={tagColors[index]?.text ?? "#D4D4D4"}/>)
                                     )}
                                 </div>
-                                <Button className="bg-wheat text-onyx font-bold w-full mb-6 py-7" asChild>
+                                <Button className="bg-primary text-onyx font-bold w-full mb-6 py-7" asChild>
                                     <Link href={tool.link}>Open Website</Link>
                                 </Button>
                         </SheetHeader>

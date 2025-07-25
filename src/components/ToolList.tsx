@@ -39,7 +39,7 @@ export default async function ToolList() {
         let description = 'No description available.';
         let category = 'Uncategorized';
         let tags: string[] = [];
-        let categoryColor = 'wheat';
+        let categoryColor = 'primary';
         let tagColors: string[] = [];
         let user: string[] = [];
         let userColors: string[] = [];

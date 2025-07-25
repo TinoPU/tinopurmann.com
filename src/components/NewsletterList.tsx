@@ -39,7 +39,7 @@ export default async function NewsletterList() {
         let rating = 1;
         let category = 'Uncategorized';
         let tags: string[] = [];
-        let categoryColor = 'wheat';
+        let categoryColor = 'primary';
         let tagColors: string[] = [];
         let info_scope = "Broad";
         let info_scopeColor = 'persian'

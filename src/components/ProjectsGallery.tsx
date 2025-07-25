@@ -1,6 +1,7 @@
 import ProjectPreview from "@/components/ui/project_preview";
 import {Project} from "@/lib/interfaces";
 import {Client, isFullPage} from "@notionhq/client";
+import ExpandedPreview from "@/components/ui/Expanded_preview";
 
 export default async function ProjectsGallery() {
     const notion = new Client({ auth: process.env.NOTION_TOKEN });
@@ -69,8 +70,9 @@ export default async function ProjectsGallery() {
     });
     
     return (
-        <div className="justify-start gap-3 flex flex-col no-swipe">
-            <div className="text-white text-2xl font-bold">Projects</div>
+        <div>
+        <div className="justify-start gap-3 flex flex-col no-swipe md:hidden">
+            <div className="text-mobileWhite md:text-white text-2xl font-bold">Projects</div>
             <div className="flex flex-row overflow-x-auto w-full pr-6 scrollbar-hidden">
                 {projects.map((project: Project) => (
                     <ProjectPreview
@@ -78,6 +80,18 @@ export default async function ProjectsGallery() {
                         img_src={project.imageUrl}
                         title={project.title}
                         description={project.description}
+                    />
+                ))}
+            </div>
+        </div>
+            <div className="hidden md:flex md:flex-col md:gap-4">
+                {projects.map((project: Project) => (
+                    <ExpandedPreview
+                        key={project.id}
+                        img_src={project.imageUrl}
+                        name={project.title}
+                        description={project.description}
+                        link=""
                     />
                 ))}
             </div>

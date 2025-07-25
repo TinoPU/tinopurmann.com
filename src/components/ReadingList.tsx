@@ -38,7 +38,7 @@ export default async function ReadingList() {
         let link = 'https://www.google.com/';
         let category = 'Uncategorized';
         let tags: string[] = [];
-        let categoryColor = 'wheat';
+        let categoryColor = 'primary';
         let tagColors: string[] = [];
         let description = 'No description available.';
 

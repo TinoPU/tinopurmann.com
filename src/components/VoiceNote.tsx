@@ -309,21 +309,21 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
                     <div className="h-full w-full flex flex-col items-center justify-center gap-10">
                         <div className="flex flex-col items-center gap-3">
                             <audio controls src={audioURL}/>
-                            <button onClick={handleDelete} className="text-wheat">
+                            <button onClick={handleDelete} className="text-primary">
                                 <Trash className="h-8 w-8" />
                             </button>
                         </div>
                         <div className="w-full flex flex-col gap-3">
                             <Label className="text-input">Who are you?</Label>
                             <Input
-                                className="w-full bg-onyx text-white"
+                                className="w-full bg-mobileOnyx md:bg-onyx text-mobileWhite md:text-white"
                                 placeholder="Name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
                             <Label className="text-input">Where can I text you?</Label>
                             <Input
-                                className="w-full bg-onyx text-white"
+                                className="w-full bg-onyx text-mobileWhite md:text-white"
                                 placeholder="Phone Number"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -355,12 +355,12 @@ export default function VoiceNote({onClose}: {onClose: () => void}) {
         </div>) : messageSentSuccessfully && !loading ? (
         <div className="h-[70vh] flex items-center justify-center flex-col w-full">
             <div className="flex flex-col items-center justify-center mt-12 gap-3">
-            <p className="text-wheat text-lg font-bold text-center">Thank You!</p>
+            <p className="text-primary text-lg font-bold text-center">Thank You!</p>
             <p className="text-slate-500 text-center">Your note was sent! I will try to get back within 24h {"<3".toString()}</p>
             </div>
             <Button className="w-full mb-6 py-7 mt-auto" onClick={handleNewMessage}>Send Another Message</Button>
         </div>
     ) : (<div className="h-[70vh] flex items-center justify-center">
-        <BlinkBlur color="#F5DDB2" size="medium" text="" textColor="" />
+        <BlinkBlur color="primary" size="medium" text="" textColor="" />
     </div>);
 }

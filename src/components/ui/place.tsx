@@ -16,7 +16,7 @@ export default function Place(place: PlaceProps) {
             <Image src={place.image_src} alt={place.alt_text} width={50} height={50}/>
             <a href={place.link} className="w-full h-[50px]">
                 <div id="content" className="flex flex-row w-full h-full justify-between">
-                    <div className="font-bold text-sm text-white">{place.title}</div>
+                    <div className="font-bold text-sm text-mobileWhite md:text-white">{place.title}</div>
                     <Badge className="bg-[#4285F4] text-white hover:bg-[#76A7FA] my-auto">Open in Google Maps</Badge>
                 </div>
             </a>
