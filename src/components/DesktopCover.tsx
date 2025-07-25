@@ -1,7 +1,5 @@
 import Image from "next/image";
-import ResourcesGallery from "@/components/ResourcesGallery";
 import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import ExpandedPreview from "@/components/ui/Expanded_preview";
 import ProjectsGallery from "@/components/ProjectsGallery";
