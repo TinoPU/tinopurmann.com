@@ -27,11 +27,11 @@ export default function DesktopCover() {
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 w-full h-full px-8 py-4 z-20 backdrop-blur-md bg-onyx/30">
-                    <div className="flex flex-row">
-                        <div className="flex justify-center items-center">
-                            <VoiceRecorder/>
-                        </div>
-                    </div>
+                    {/*<div className="flex flex-row">*/}
+                    {/*    <div className="flex justify-center items-center">*/}
+                    {/*        <VoiceRecorder/>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                     <div className="flex flex-row gap-2">
                         <Button variant="tab" size="tab">Projects</Button>
                         <Button variant="tab" size="tab">Resources</Button>

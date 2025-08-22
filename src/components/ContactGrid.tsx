@@ -14,7 +14,7 @@ export default function ContactGrid({setIsOpen, isOpen}: ContactGridProps) {
         <div className="flex flex-col gap-2 rounded-sm md:bg-onyx md:rounded md:p-4 md:min-h-screen md:h-full">
             <div className="grid grid-cols-2 gap-2 pr-6 md:pr-0 md:flex md:flex-col">
                 <div className="flex flex-col gap-2 md:w-full">
-                    <div className="flex md:hidden"><VoiceRecorder/></div>
+                    {/*<div className="flex md:hidden"><VoiceRecorder/></div>*/}
                     <div className="hidden md:flex flex-row items-center gap-2">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
