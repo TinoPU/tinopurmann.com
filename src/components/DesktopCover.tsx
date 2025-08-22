@@ -1,6 +1,6 @@
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
-import VoiceRecorder from "@/components/VoiceRecorder";
+// import VoiceRecorder from "@/components/VoiceRecorder";
 import ExpandedPreview from "@/components/ui/Expanded_preview";
 import ProjectsGallery from "@/components/ProjectsGallery";
 
