@@ -1,14 +1,14 @@
 import type {ToolProps} from "@/lib/interfaces";
-import {Client, isFullPage} from "@notionhq/client";
+import {isFullPage} from "@notionhq/client";
 import Tool from "@/components/ui/tool";
+import {safeNotionQuery} from "@/lib/notion";
 
 
 export default async function ToolList() {
-    const notion = new Client({auth: process.env.NOTION_TOKEN});
     const databaseId = '568b786ce72241509467f609ca0d4f82';
 
     // Fetch data on the server side
-    const response = await notion.databases.query({
+    const response = await safeNotionQuery({
         database_id: databaseId,
         filter: {
             or: [

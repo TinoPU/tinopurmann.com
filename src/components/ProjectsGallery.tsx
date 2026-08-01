@@ -1,14 +1,14 @@
 import ProjectPreview from "@/components/ui/project_preview";
 import {Project} from "@/lib/interfaces";
-import {Client, isFullPage} from "@notionhq/client";
+import {isFullPage} from "@notionhq/client";
 import ExpandedPreview from "@/components/ui/Expanded_preview";
+import {safeNotionQuery} from "@/lib/notion";
 
 export default async function ProjectsGallery() {
-    const notion = new Client({ auth: process.env.NOTION_TOKEN });
     const databaseId = '14326a26061480f59e93cbe28c76ac63';
 
     // Fetch data on the server side
-    const response = await notion.databases.query({
+    const response = await safeNotionQuery({
         database_id: databaseId,
         filter: {
             or: [

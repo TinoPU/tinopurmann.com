@@ -1,14 +1,14 @@
 import type {ReadingProps} from "@/lib/interfaces";
-import {Client, isFullPage} from "@notionhq/client";
+import {isFullPage} from "@notionhq/client";
 import Reading from "@/components/ui/reading";
+import {safeNotionQuery} from "@/lib/notion";
 
 
 export default async function ReadingList() {
-    const notion = new Client({auth: process.env.NOTION_TOKEN});
     const databaseId = '260fa349f5d6478ea94721f2226534f2';
 
     // Fetch data on the server side
-    const response = await notion.databases.query({
+    const response = await safeNotionQuery({
         database_id: databaseId,
         filter: {
             or: [

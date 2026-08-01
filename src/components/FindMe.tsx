@@ -4,15 +4,15 @@ import QuickAccess from "@/components/ui/quickaccess";
 import React from "react";
 import GoogleMapView from "@/components/GoogleMapView";
 import {MapProps} from "@/lib/interfaces";
-import {Client, isFullPage} from "@notionhq/client";
+import {isFullPage} from "@notionhq/client";
+import {safeNotionQuery} from "@/lib/notion";
 
 
 export default async function FindMe() {
 
-    const notion = new Client({ auth: process.env.NOTION_TOKEN });
     const locationDBId = '14426a260614809d9c57e0ade3e5a5e6';
 
-    const location_response = await notion.databases.query({
+    const location_response = await safeNotionQuery({
         database_id: locationDBId,
         filter: {
             or: [

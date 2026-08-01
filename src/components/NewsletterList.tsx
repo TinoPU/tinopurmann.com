@@ -1,14 +1,14 @@
 import type {NewsletterProps} from "@/lib/interfaces";
-import {Client, isFullPage} from "@notionhq/client";
+import {isFullPage} from "@notionhq/client";
 import Newsletter from "@/components/ui/newsletter";
+import {safeNotionQuery} from "@/lib/notion";
 
 
 export default async function NewsletterList() {
-    const notion = new Client({auth: process.env.NOTION_TOKEN});
     const databaseId = '620d64a99cf14a5895f5b1bddae5f39a';
 
     // Fetch data on the server side
-    const response = await notion.databases.query({
+    const response = await safeNotionQuery({
         database_id: databaseId,
         filter: {
             or: [
