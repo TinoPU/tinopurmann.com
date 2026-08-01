@@ -2,7 +2,7 @@
 "use client";
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './SwipeProvider.module.css';
 
 interface SwipeProviderProps {
@@ -11,6 +11,11 @@ interface SwipeProviderProps {
 
 export default function SwipeProvider({ children }: SwipeProviderProps) {
     const router = useRouter();
+    const pathname = usePathname();
+
+    // Notion's embed SPA remounts when wrapped in a transformed / overflow-hidden
+    // container — skip the swipe chrome on /cv so the iframe stays stable.
+    const disableSwipe = pathname === '/cv';
 
     // Refs to track touch positions
     const touchStartX = useRef<number | null>(null);
@@ -24,6 +29,12 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
+        if (disableSwipe) {
+            setTranslateX(0);
+            setIsAnimating(false);
+            return;
+        }
+
         const handleTouchStart = (e: TouchEvent) => {
             // Check if touch started on an element that should disable swipe
             const targetElement = e.target as HTMLElement;
@@ -102,7 +113,11 @@ export default function SwipeProvider({ children }: SwipeProviderProps) {
             document.removeEventListener('touchmove', handleTouchMove);
             document.removeEventListener('touchend', handleTouchEnd);
         };
-    }, [router]);
+    }, [router, disableSwipe]);
+
+    if (disableSwipe) {
+        return <>{children}</>;
+    }
 
     return (
         <div
