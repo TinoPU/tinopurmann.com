@@ -1,0 +1,3 @@
+# ~150MB static ffmpeg binaries — voice note UI is currently disabled, and
+# bundling these into serverless functions exceeds Vercel's size limits.
+bin
